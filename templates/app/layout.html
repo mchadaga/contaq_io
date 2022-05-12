@@ -81,23 +81,23 @@
             }
         }
 
-        window.onload = function(){
             document.getElementById("hamburger").onclick = function(){
                 if (document.getElementById("mySidenav").style['width']!="100%"){
                     document.getElementById("mySidenav").style['width']="100%"
+                    document.getElementById("user-name-email").style["display"]="inline"
                     document.getElementById("top").style['color']="white"
                     document.getElementById("top").style['background-color']="#1b1d2a"
                     document.getElementById("mySidenav").style['margin-top']="60px"
                 }
                 else{
                     document.getElementById("mySidenav").style['width']="0"
-
+                    document.getElementById("user-name-email").style["display"]="none"
                     document.getElementById("top").style['color']="black"
                     document.getElementById("top").style['background-color']="white"
                     document.getElementById("mySidenav").style['margin-top']="0px"    
                 }
             }
-        }
+
     </script>
     {% block page_js %}
     {% endblock %}
