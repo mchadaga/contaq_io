@@ -1,0 +1,40 @@
+{% extends "app/layout.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block body %}
+<style type="text/css">
+#dash{
+    background-color: #325ae7;
+    color: white
+}
+</style>
+<div id="top2">
+    <h1>Welcome to Contaq.io!</h1>
+    <p>You have <b>{{user.credits}}</b> credits remaining</p>
+</div>
+<div class="section-inner"><h2>How To Get Started</h2><p>
+    <p>1. Watch the 60-second tutorials below.<br><br>
+    2. Start a <a id="newsearch" href="{% url 'search' %}">new search</a> in an industry and location you want to contact.<br><br>
+    3. Export your freshly-scraped verified emails from the <a id="listspage" href="{% url 'lists' %}">lists page</a>.</p>
+</p></div>
+{% comment %} <div class="cols3">
+    <div class="column"><iframe
+        src="https://www.youtube.com/embed/tgbNymZ7vqY">
+        </iframe></div>
+    <div class="column">f</div>
+    <div class="column">f</div>
+</div> {% endcomment %}
+<div class="flex-row-container">
+    <iframe id="iframe-left" allow="fullscreen;"
+        src="https://www.youtube.com/embed/JLg-K6aFZck">
+        </iframe><iframe id="iframe-left" allow="fullscreen;"
+        src="https://www.youtube.com/embed/2jzevCM79-Y">
+        </iframe><iframe id="iframe-left" allow="fullscreen;"
+        src="https://www.youtube.com/embed/MzGvaa_3Oxs">
+        </iframe></div>
+
+  </div>
+{% endblock %}

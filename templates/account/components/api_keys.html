@@ -1,0 +1,43 @@
+<section class="app-card">
+  <h2 class="pg-subtitle">API Keys</h2>
+  {% for key in api_keys %}
+    {% if forloop.first %}
+    <div class='table-responsive'>
+      <table class="table pg-table">
+        <thead>
+        <tr>
+          <th>Prefix</th>
+          <th>Created</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+      {% endif %}
+          <tr>
+            <td>{{ key.prefix }}</td>
+            <td>{{ key.created.date }}</td>
+            <td>
+              <form method="post" action="{% url 'users:revoke_api_key' %}">
+                {% csrf_token %}
+                <input type="hidden" name="key_id" value="{{ key.id }}">
+                <div class="pg-inline-buttons">
+                  <input type="submit" class="pg-button-danger" value="Revoke" />
+                </div>
+              </form>
+            </td>
+          </tr>
+      {% if forloop.last %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  {% empty %}
+    <p>You haven't created any API keys yet. Create one below.</p>
+  {% endfor %}
+  <form method="post" action="{% url 'users:create_api_key' %}">
+    {% csrf_token %}
+    <div class="mt-2">
+      <input type="submit" class="pg-button-secondary" value="New API Key" />
+    </div>
+  </form>
+</section>

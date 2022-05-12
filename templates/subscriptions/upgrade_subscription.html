@@ -1,0 +1,123 @@
+{% extends "app/layout.html" %}
+{% load static %}
+{% load i18n %}
+{% block body %}
+<style type="text/css">
+  #subscription{
+    background-color: #325ae7;
+    color: white
+  }
+  </style>
+  <div id="top2">
+    <h1>My Subscription</h1>
+    <p>You are not currently subscribed to a plan. Choose a plan to gain access to our prospecting tool.</p>
+  </div>
+    
+<section class="section-inner">
+  {% comment %} {% include 'subscriptions/components/subscription_hero.html' %} {% endcomment %}
+  {% comment %} <hr> {% endcomment %}
+  {% include 'subscriptions/components/plan_selector.html' %}
+  <br>
+  <div style="max-width: 650px">
+    {% block subscription_form %}{% endblock %}
+  </div>
+</section>
+{% endblock %}
+{% block page_js %}
+{{ active_products_json|json_script:'active-products' }}
+<script>
+  const initializePlanSelectorEvents = function(onPlanChanged) {
+    const activeProducts = JSON.parse(document.getElementById('active-products').textContent);
+    const defaultAnnual = '{{ default_to_annual }}' === 'True';
+
+    const getSelectedPlanElement = function () {
+      return document.querySelector('.plan.is-selected');
+    };
+
+    // hook up "monthly"/"annual" selection events
+    const monthlySelector = document.getElementById('plan-selector-month');
+    const annualSelector = document.getElementById('plan-selector-year');
+    const helpLabel = document.getElementById('plan-help');
+    const planElements = document.getElementsByClassName('plan');
+    const annualHelpText = "You're getting two months free by choosing an Annual plan!";
+    const monthlyHelpText = "Upgrade to annual pricing to get two free months.";
+
+    const updatePlans = function (isAnnual) {
+      for (let i = 0; i < planElements.length; i++) {
+        let planElt = planElements[i];
+        let productId = planElt.dataset.productId;
+        let planMetadata = (
+          isAnnual ? activeProducts[productId]['annual_plan'] : activeProducts[productId]['monthly_plan']
+        );
+        // set data attribute
+        planElt.dataset.planId = planMetadata.stripe_id;
+        planElt.dataset.interval = isAnnual ? 'year' : 'month';
+        planElt.dataset.paymentAmount = planMetadata.payment_amount;
+        let priceElt = planElt.querySelector('.price');
+        priceElt.textContent = planMetadata.payment_amount;
+        let intervalElt = planElt.querySelector('.interval');
+        intervalElt.textContent = '/ ' + planMetadata.interval;
+      }
+    };
+
+    const selectPeriod = function (isAnnual) {
+      if (isAnnual) {
+        if (annualSelector) {
+          annualSelector.classList.add('is-selected', 'is-primary');
+          monthlySelector.classList.remove('is-selected', 'is-primary');
+          helpLabel.innerText = annualHelpText;
+          helpLabel.classList.add('is-primary');
+          helpLabel.classList.remove('is-danger');
+        }
+        updatePlans(isAnnual);
+      } else {
+        if (monthlySelector) {
+          annualSelector.classList.remove('is-selected', 'is-primary');
+          monthlySelector.classList.add('is-selected', 'is-primary');
+          helpLabel.innerText = monthlyHelpText;
+          helpLabel.classList.add('is-danger');
+          helpLabel.classList.remove('is-primary');
+        }
+        updatePlans(isAnnual);
+      }
+      onPlanChanged(getSelectedPlanElement());
+    };
+    selectPeriod(defaultAnnual);
+    if (annualSelector) {
+      annualSelector.addEventListener('click', function (event) {
+        selectPeriod(true);
+      });
+    }
+    if (monthlySelector) {
+      monthlySelector.addEventListener('click', function (event) {
+        selectPeriod(false);
+      });
+    }
+
+    // hook up plan selection events
+    const selectPlan = function(plan) {
+      // if already selected there's nothing to do
+      if (!plan.classList.contains('is-selected')) {
+        plan.classList.add('is-selected');
+        for (let i = 0; i < planElements.length; i++) {
+          if (planElements[i] !== plan) {
+            planElements[i].classList.remove('is-selected');
+          }
+        }
+      }
+      onPlanChanged(getSelectedPlanElement());
+    };
+    for (let i = 0; i < planElements.length; i++) {
+      planElements[i].addEventListener('click', function(event) {
+        let plan = event.target.closest('.plan');
+        selectPlan(plan);
+      });
+    }
+    // if no plan was the default, then select the first one
+    const selectedElement = getSelectedPlanElement();
+    if (!selectedElement) {
+      selectPlan(planElements[0]);
+    }
+  }
+</script>
+{% endblock page_js %}

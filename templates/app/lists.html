@@ -1,0 +1,42 @@
+{% extends "app/layout.html" %}
+
+{% block title %}
+    Scrape Emails
+{% endblock %}
+
+{% block body %}
+<style type="text/css">
+    #scrape{
+        background-color: #325ae7;
+        color: white
+    }
+    </style>
+    <div id="top2">
+        <h1>Your Lead Lists</h1>
+        <p>View and download your verified emails.</p>
+    </div>
+    <div class="section-inner">
+    <table id="searches">
+        <tr>
+            <th>id</th>
+            <th>Industry</th>
+            <th>Location</th>
+            <th>Emails Found</th>
+        </tr>
+        {% for search in searches %}
+        <tr>
+            <td><a href="{% url "list" search.id %}">list_{{search.id}}</a></td>
+            <td>{{ search.industry }}</td>
+            <td>{{ search.location }}</td>
+            <td>
+                {% if search.count == 0 %}
+                    -
+                {% else %}
+                    {{ search.count }}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+default_context:
+  _pegasus_version: '2022.3'
+  author_name: Mani Chadaga
+  ci: none
+  css_framework: bulma
+  css_theme: default
+  database: sqlite
+  deploy_platform: heroku
+  description: Contaq.io is a powerful lead generation tool that finds verified contacts
+    in any niche and location!
+  domain_name: contaq.io
+  email: mchadaga1@gmail.com
+  enable_google_login: y
+  front_end_framework: htmx
+  project_name: Contaq.io
+  project_slug: contaq_io
+  stripe_payment_mode: both
+  subscription_billing_model: default
+  use_api_keys: y
+  use_docker: n
+  use_impersonation: n
+  use_subscriptions: y
+  use_teams: n

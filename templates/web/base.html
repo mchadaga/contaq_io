@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <!--IE compatibility-->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--Mobile friendly-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% include 'web/components/meta.html' %}
+{% comment %} {% include 'web/components/favicon.html' %} {% endcomment %}
+<link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+
+    <link rel="stylesheet" href="{% static 'css/site-base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/site-bulma.css' %}">
+    <script src="https://use.fontawesome.com/72135c02f1.js"></script>
+    {% if GOOGLE_ANALYTICS_ID %}
+        {% include 'web/components/google_analytics.html' %}
+    {% endif %}
+    {% block page_head %}
+    {% endblock %}
+</head>
+<body>
+{% block body_wrapper %}
+{% block top_nav %}
+  {% include 'web/components/top_nav.html' %}
+{% endblock %}
+{% block messages %}
+  {% include 'web/components/messages.html' %}
+{% endblock messages %}
+{% block body %}
+{% endblock body %}
+{% block footer %}
+  {% include 'web/components/footer.html' %}
+{% endblock footer %}
+{% endblock body_wrapper %}
+{% block page_js %}
+{% endblock page_js %}
+  {% include 'web/components/messages-js.html' %}
+  {% include 'web/components/navbar-js.html' %}
+</body>
+</html>

@@ -1,0 +1,106 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+    <link rel="stylesheet" href="{% static "css/site-bulma2.css" %}">
+    <link rel="stylesheet" href="{% static "css/site-base.css" %}">
+    <link rel="stylesheet" href="{% static "css/app/app.css" %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Vadodara&family=Philosopher:wght@700&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">    
+    <title>{% block title %}{% endblock %} - Contaq.io</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<header>
+    {% comment %} <nav>
+        <ul>
+            <li><a href="{% url "dashboard" %}">Dashboard</a></li>
+            <li><a href="{% url "search" %}">Search</a></li>
+            <li><a href="{% url "scrape" %}">Scrape</a></li>
+        </ul>
+    </nav> {% endcomment %}
+    <div id="mySidenav" class="sidenav">
+        <div id="sidenav-top">
+        <div id="sidenav-img"><center><a href="{% url "dashboard" %}"><img src="https://i.imgur.com/Xyzro6r.png"></a></center></div>
+        <a class="sidenav-link" id="dash" href="{% url "dashboard" %}"><i class="fa fa-fw fa-tachometer"></i><span class="sidenav-text">Dashboard</span></a>
+        <a class="sidenav-link" id="search" class="negMargin" href="{% url "search" %}"><i class="fa fa-fw fa-search"></i><span class="sidenav-text">Search</span></a>
+        {% comment %} <a class="sidenav-link" id="scrape" class="negMargin" href="{% url "lists" %}"><i class="fa fa-fw fa-list-ul"></i><span class="sidenav-text">Lead Lists <span class="tag is-danger is-rounded" style="font-size:10px;vertical-align:text-bottom">1</span></span></a> {% endcomment %}
+        <a class="sidenav-link" id="scrape" class="negMargin" href="{% url "lists" %}"><i class="fa fa-fw fa-list-ul"></i><span class="sidenav-text">Lead Lists </span></a>
+        <a class="sidenav-link" id="subscription" class="negMargin" href="{% url "subscriptions:subscription_details" %}"><i class="fa fa-fw fa-credit-card"></i><span class="sidenav-text">Subscription</span></a>
+        <a class="sidenav-link" id="profile" class="negMargin" href="{% url "users:user_profile" %}"><i class="fa fa-fw fa-user-circle"></i><span class="sidenav-text">Profile</span></a>
+        <a class="sidenav-link" id="change_password" class="negMargin" href="{% url "change_password" %}"><i class="fa fa-fw fa-lock"></i><span class="sidenav-text">Change Password</span></a>
+        <a class="sidenav-link" id="log_out" style="bottom:0px" class="negMargin" href="{% url "logout" %}"><i class="fa fa-fw fa-sign-out"></i><span class="sidenav-text">Log Out</span></a>
+        </div>
+        <div id="collapse-expand" onclick="toggleSidebar()"><i id="collapse-expand-icon" class="fa fa-fw fa-angle-double-left"></i></div>
+    </div>
+</header>
+<body>
+    <div id="top"><span id="hamburger" style="position:absolute;left:20px;font-size:20px;cursor:pointer"><i id="collapse-expand-icon" class="fa fa-fw fa-bars"></i></span><span><span id="user-name-email">{{user}}</span> {% if user.credits == 0 %}<div class="tag is-danger is-medium ">{{user.credits}} credits</div>{% else %}<div class="tag is-success is-medium ">{{user.credits}} credits</div></a>{% endif %}</span></div>
+    {% block messages %}
+    {% include 'web/components/messages.html' %}
+  {% endblock messages %}
+    {% block body %}
+    {% endblock %}
+    <script type="text/javascript">
+        {% comment %} $.ajax({
+            type: 'GET',
+            url: "{% url 'num_credits' %}",
+            success: function (response) {
+                $("num_cred").html(response["credits"])
+            }
+        }) {% endcomment %}
+        function toggleSidebar(e) {
+            if (document.getElementById("mySidenav").style['width']=="50px"){
+                document.getElementById("mySidenav").style['width']="260px"
+                document.getElementsByTagName("BODY")[0].style['margin-left']="260px"
+                document.getElementById("collapse-expand-icon").classList.add("fa-angle-double-left")
+                document.getElementById("collapse-expand-icon").classList.remove("fa-angle-double-right")
+                //document.getElementById("collapse-expand").innerHTML = '''<i class="fa fa-fw fa-angle-double-left"></i>'''
+                text = document.getElementsByClassName("sidenav-text")
+                for (const element of text){
+                    element.style['display']='inline'
+                }
+            }
+            else{
+                document.getElementById("mySidenav").style['width']="50px"
+                document.getElementsByTagName("BODY")[0].style['margin-left']="50px"
+                //document.getElementById("collapse-expand").innerHTML = '''<i class="fa fa-fw fa-angle-double-right"></i>'''
+                document.getElementById("collapse-expand-icon").classList.add("fa-angle-double-right")
+                document.getElementById("collapse-expand-icon").classList.remove("fa-angle-double-left")
+                text = document.getElementsByClassName("sidenav-text")
+                for (const element of text){
+                    element.style['display']='none'
+                }
+            }
+        }
+
+        window.onload = function(){
+            document.getElementById("hamburger").onclick = function(){
+                if (document.getElementById("mySidenav").style['width']!="100%"){
+                    document.getElementById("mySidenav").style['width']="100%"
+                    document.getElementById("top").style['color']="white"
+                    document.getElementById("top").style['background-color']="#1b1d2a"
+                    document.getElementById("mySidenav").style['margin-top']="60px"
+                }
+                else{
+                    document.getElementById("mySidenav").style['width']="0"
+
+                    document.getElementById("top").style['color']="black"
+                    document.getElementById("top").style['background-color']="white"
+                    document.getElementById("mySidenav").style['margin-top']="0px"    
+                }
+            }
+        }
+    </script>
+    {% block page_js %}
+    {% endblock %}
+    {% include 'web/components/messages-js.html' %}
+</body>
+</html>

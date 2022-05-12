@@ -1,0 +1,21 @@
+{% extends "subscriptions/upgrade_subscription.html" %}
+{% load static %}
+{% block subscription_form %}
+  <form action="{{ subscription_urls.create_checkout_session }}" method="POST" id="checkout-form">
+    {% csrf_token %}
+    <input type="hidden" name="priceId" value="" id="price-input"/>
+    <button type="submit" class="button is-primary" id="subscribe-button">Upgrade</button>
+  </form>
+{% endblock %}
+{% block page_js %}{{ block.super }}
+<script>
+  // wire up the plan selector elements to the checkout form
+  const updatePaymentDetails = function (selectedPlan) {
+    if (selectedPlan) {
+      const priceInput = document.getElementById('price-input');
+      priceInput.value = selectedPlan.dataset.planId;
+    }
+  };
+  initializePlanSelectorEvents(updatePaymentDetails);
+</script>
+{% endblock page_js %}

@@ -1,0 +1,407 @@
+
+
+/* ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 200px;
+    background-color: #f1f1f1;
+}
+
+
+li a {
+    display: block;
+    color: #000;
+    padding: 8px 16px;
+    text-decoration: none;
+}
+
+/* Change the link color on hover */
+/* li a:hover {
+    background-color: #555;
+    color: white;
+} */
+
+.sidenav {
+    height: 100%; /* 100% Full-height */
+    width: 260px; /* 0 width - change this with JavaScript */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 0;
+    background-color: #1b1d2a; /* Black*/
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 5px; /* Place content 60px from the top */
+}
+
+#sidenav-bottom{
+    top: 100%;
+    bottom:0%;
+}
+
+
+.sidenav img {
+    height:50px;
+
+}
+
+#sidenav-img{
+    border-bottom: 1px solid #2c2c2c;
+}
+
+#dash{
+    margin-top: 23px;
+}
+
+.table-link{
+    color: rgb(32, 148, 190)
+}
+
+#form input{
+    font-size: 18px;
+    font-family: 'Hind Vadodara';
+}
+
+#collapse-expand{
+    position:absolute;
+    bottom:0px;
+    height:50px;
+    width:100%;
+    background-color: rgba(255,255,255,0.08);
+    border:none;
+    border-top:1px solid #444444;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#collapse-expand:hover {
+
+    background-color: rgba(255,255,255,0.15);
+  }
+
+  #collapse-expand i{
+      font-size: 20px;
+      padding-bottom:10px;
+      color:#f1f1f1
+}
+#searches{
+    width: 50%;
+    text-align: left;
+}
+
+#searchResults{
+    width: 100%;
+    text-align: left;
+    overflow:scroll;
+}
+
+#searchResults tr td{
+    border: 0px
+}
+
+/* The navigation menu links */
+.sidenav-link {
+    padding: 8px 8px 8px 12px;
+    text-decoration: none;
+    line-height: 1.5em;
+    font-size: 15px;
+    font-family: 'DM Sans';
+    color: #bdbdbd;
+    display: block;
+    transition: 0.3s;
+    background-color: rgba(255,255,255,0);
+  }
+
+  .sidenav-link i{
+      margin-right:20px;
+      font-size: 20px;
+      vertical-align: text-bottom;
+  }
+
+  /* When you mouse over the navigation links, change their color */
+  .sidenav-link:hover {
+    color: #f1f1f1;
+    background-color: rgba(255,255,255,0.08);
+  }
+
+#top{
+    height: 60px;
+    background-color: #fff;
+    display:flex;
+    -webkit-box-align: center;
+    align-items: center;
+    align-self: center;
+    justify-content: flex-end;
+    padding-right:20px;
+    border-bottom: 1px solid rgb(235, 235, 235);
+}
+
+#top2{
+    background-color: #fff;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    padding-left:60px;
+    padding-right:60px;
+    border-bottom: 1px solid rgb(235, 235, 235);
+    
+}
+
+#top2 p{
+    padding-bottom: 30px;
+    margin: 0px;
+    color: #808292
+}
+
+#newsearch:visited{
+    text-decoration: none;
+    color:rgb(78, 114, 190)
+}
+
+#listspage:visited{
+    text-decoration: none;
+    color:rgb(78, 114, 190)
+}
+
+.section-inner{
+    margin-left:60px;
+    margin-right:60px;
+    margin-top:20px;
+    margin-bottom:40px;
+    padding:20px;
+    padding-top:10px;
+    padding-bottom:10px;
+    background-color: rgb(255, 255, 255);
+    -moz-box-shadow: 0 0 3px #eee;
+    -webkit-box-shadow: 0 0 3px #eee;
+    box-shadow: 0 0 3px #eee;
+    border-radius:10px
+}
+
+#section-csv{
+    margin-left:60px;
+    margin-right:60px;
+    margin-top:40px;
+    margin-bottom:0px;
+    padding:20px;
+    padding-top:10px;
+    padding-bottom:10px;
+    background-color: #fff3d2;
+    -moz-box-shadow: 0 0 3px #eee;
+    -webkit-box-shadow: 0 0 3px #eee;
+    box-shadow: 0 0 3px #eee;
+    border-radius:10px
+}
+
+#loading-bar{
+    margin-left:60px;
+    margin-right:60px;
+}
+
+.section-inner p{
+    color: #626474
+}
+
+
+
+.cols3{
+    margin-left:60px;
+    margin-right:60px;
+}
+
+#cols1 input{
+    height:40px;
+    width: 90%;
+    font-size: 18px;
+    font-family: "Hind Vadodara";
+    border-radius: 4px;
+    border: solid #C0C2D2
+}
+
+.column-3 {
+    float: left;
+    width: 33.33%;
+    height: 1000px;
+}
+
+.column-3 iframe{
+    width:100%;
+}
+
+.column-3 input{
+    width:260px;
+    height:30px;
+    border-radius: 4px;
+    border: 1px solid #bbbbbb
+}
+.flex-row-container {
+    margin-left:60px;
+    margin-right:60px;
+    /* background-color: black; */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.flex-row-container > .flex-row-item {
+    flex: 1 1 30%; /*grow | shrink | basis */
+    height: 100px;
+}
+
+#iframe-right {
+    display: flex;
+    margin-right: 20px;
+}
+
+.flex-row-container iframe{
+    width: 32%;
+    height: 200px;
+    border-radius: 3px;
+    border: none;
+    -moz-box-shadow: 0 0 3px #eee;
+    -webkit-box-shadow: 0 0 3px #eee;
+    box-shadow: 0 0 3px #eee;
+}
+
+  /* Clear floats after the columns */
+  .cols3:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  .form-col{
+    float: left;
+      width:50%;
+    
+  }
+
+  #ctio-checkbox{
+    height:20px;
+    width: 18px;
+    font-family: "Hind Vadodara";
+    border-radius: 4px;
+    border: solid #C0C2D2;
+    margin-left: 0px;
+    padding-left: 0px;
+    margin-top: 5px;
+    vertical-align: text-bottom;
+}
+
+
+  .form-col input{
+      height:40px;
+      width: 90%;
+      font-family: "Hind Vadodara";
+      border-radius: 4px;
+      border: solid #C0C2D2;
+      padding-left: 5px;
+  }
+
+  .form-col select{
+    font-family: "Hind Vadodara";
+    border-radius: 3px;
+    width: auto;
+    border: solid #C0C2D2
+}
+
+#start_scrape{
+    background-color: #f5f5f5;
+    cursor:pointer
+}
+
+#start_scrape:hover{
+    background-color: #325ae7;
+    color:white;
+    cursor:pointer
+}
+
+
+.form-col textarea{
+    /* height:0px; */
+    width: 90%;
+    font-family: "Hind Vadodara";
+    border-radius: 4px;
+    border: solid #C0C2D2;
+    line-height: 1.1em;
+    overflow: scroll;
+}
+
+  
+
+
+  .form-container{
+      overflow:auto;
+      padding-bottom:15px;
+  }
+
+body {
+    margin: 0;
+    margin-left: 260px;
+    /* padding: 20px;
+    padding-top: 0px; */
+    font-family: 'DM Sans';
+    background-color:#f6f7f9;
+}
+
+.autocomplete {
+    /*the container must be positioned relative:*/
+    position: relative;
+    display: inline-block;
+}
+
+.autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    /*position the autocomplete items to be the same width as the container:*/
+    top: 100%;
+    width: 90%;
+    left: 0;
+    right: 0;
+  }
+  .autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+    border-bottom: 1px solid #d4d4d4;
+  }
+  .autocomplete-items div:hover {
+    /*when hovering an item:*/
+    background-color: #e9e9e9;
+  }
+  .autocomplete-active {
+    /*when navigating through the items using the arrow keys:*/
+    background-color: DodgerBlue !important;
+    color: #ffffff;
+  }
+
+/* On screens that are less than 700px wide, make the sidebar into a topbar */
+@media screen and (max-width: 700px) {
+    .section-inner {
+        margin-left:0px;
+        margin-right:0px;
+    }
+
+    #user-name-email {
+        color:white
+    }
+
+    #top2{
+        padding-left:20px;
+        padding-right:20px
+    }
+
+    .sidenav {
+        width:0px;
+    }
+
+    body{
+        margin-left:0px;
+    }
+  }

@@ -1,0 +1,118 @@
+{% extends "app/layout.html" %}
+
+{% block title %}
+    Dashboard
+{% endblock %}
+
+{% block body %}
+<style type="text/css">
+    #scrape{
+        background-color: #325ae7;
+        color: white
+    }
+    </style>
+    <div id="top2">
+        <h2>Search for <u>{{industry}}</u> in <u>{{location}}</u></h2>
+        <p>Max num. leads: <b>{{target}}</b>, Job titles: {% for job in job_titles %}<i>{{job}}</i>{{ forloop.last|yesno:",&#44;"|safe }} {%endfor%}</p>
+    </div>
+    {% comment %} <div id="loading"></div> {% endcomment %}
+    <div id="section-csv">
+        <span id="loading" style="display:block">Searching for new leads ...</span>
+        <span id="leads-found-successfully" style="display:none">
+            <b><span id="num_of_target"></span>
+            verified emails found!</b>
+            <span id="extraleads" {% if count > target %} style="display:inline"{%else%}style="display:none"{%endif%}>(The {{extra}} extra leads are free of charge!)</span> 
+            <span id="refund" {% if count < target %} style="display:inline"{%else%}style="display:none"{%endif%}>(The remaining {% widthratio extra 1 -1 %} credits have been refunded.)</span> 
+            <br>
+            <a href="{% url "get_csv" id %}">Download CSV</a>
+            <br>
+            <i>All data columns: Searched Industry, Searched Location, Category, Company Website, Company Name, Company Address, Company Phone, Company LinkedIn, Employee Count, Contact Name, Contact Title, Contact LinkedIn, Contact Email, Verified</i></span>
+    </div>
+    <div id="loading-bar"><br><progress class="progress is-small is-info" max="100">15%</progress></div>
+    <div class="section-inner">
+    <div id="searchResDiv">
+        {% include 'app/table.html' %}
+    </div>
+    </div>
+    <script type="text/javascript">
+        {% comment %} window.onload = function(){ {% endcomment %}
+            var a = 0
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'scrape_status' id %}",
+                success: function (response) {
+                    a = response["stage"]
+                    if(a==4){
+                        $("#section-csv").css({"backgroundColor":" #daf5e1"});
+                        $("#loading").hide()
+                        $("#loading-bar").hide()
+                        $("#leads-found-successfully").show()
+                        $("#num_of_target").html(response["count"]+"/"+response["target"])
+                    }
+                    else{
+                        //$("#section-csv").css({"backgroundColor":"white"});
+                        if(a==0){
+                            $("#loading").html("Searching for new leads...")
+                        }
+                        else if(a==1){
+                            $("#loading").html("Finding decision maker names...")
+                        }
+                        else if(a==2){
+                            $("#loading").html("Scraping emails and verifying their deliverability...")
+                        }
+                        else if(a==3){
+                            $("#loading").html("Processing results...")
+                        }
+                        loadInterval = setInterval(function(){$.ajax({
+                            type: 'GET',
+                            url: "{% url 'scrape_status' id %}",
+                            success: function (response) {
+                                if(response["stage"]!=a){
+                                    console.log(a)
+                                    console.log(response["stage"])
+                                    a=response["stage"]
+                                    if(a==4){
+                                        $("#section-csv").css("background-color"," #daf5e1");
+                                        $("#loading").hide()
+                                        $("#loading-bar").hide()
+                                        $("#leads-found-successfully").show()
+                                        $("#num_of_target").html(response["count"]+"/"+response["target"])
+                                        if(response["count"]>response["target"]){
+                                            $("#extraleads").show()
+                                            $("#extraleads").html("(The "+(response["count"]-response["target"])+" extra leads are free of charge!)")
+                                        }
+                                        $("#searchResDiv").load("{% url 'list' id=id %}")
+                                        clearInterval(loadInterval)
+                                    }
+                                    else if(a==0){
+                                        $("#leads-found-successfully").hide()
+                                        $("#loading").show()
+                                        $("#loading").html("Searching for new leads...")
+                                        $("#searchResDiv").load("{% url 'list' id=id %}")
+                                    }
+                                    else if(a==1){
+                                        $("#loading").html("Finding decision maker names...")
+                                        $("#searchResDiv").load("{% url 'list' id=id %}")
+                                    }
+                                    else if(a==2){
+                                        $("#loading").html("Scraping emails and verifying their deliverability...")
+                                        $("#searchResDiv").load("{% url 'list' id=id %}")
+                                    }
+                                    else if(a==3){
+                                        $("#loading").html("Processing results...")
+                                        $("#searchResDiv").load("{% url 'list' id=id %}")
+                                    }
+                                }
+                                else if(a==2){
+                                    $("#searchResDiv").load("{% url 'list' id=id %}")  
+                                }
+                            }
+                        })},1000)
+                    }
+                }
+            })
+
+            
+        {% comment %} } {% endcomment %}
+    </script>
+{% endblock %}

@@ -1,0 +1,62 @@
+<table id="searchResults">
+    <tr>
+        <th>Industry</th>
+        <th>Location</th>
+        <th>Company</th>
+        <th>Contact Name</th>
+        <th>Contact Title</th>
+        {% comment %} <th>Snippet</th> {% endcomment %}
+        <th>Double-Verified Email</th>
+        {% comment %} <th>Address</th>
+        <th>Link</th>
+        <th>LinkedIn</th>
+        <th>Count</th> {% endcomment %}
+        {% comment %} <th>Order</th> {% endcomment %}
+        {% comment %} <th>Name</th>
+        <th>Title</th>
+        <th>LinkedIn</th>
+        <th>Verified Email</th>
+        <th>Phone</th>
+        <th>Valid</th>
+        <th>ID</th> {% endcomment %}
+    </tr>
+    {% for result in searchResults %}
+    {% if result.processed == False %}
+        <tr style="background-color: whitesmoke">
+    {% else %} 
+        <tr>
+    {% endif %}
+        {% comment %} <td>{{result.search.industry}}</td>   {% endcomment %}
+        
+        <td>{{result.category}}</td>
+        <td>{{result.search.location}}</td>   
+        <td><a class="table-link" href="http://www.{{result.domain}}" target="_blank" rel="noopener noreferrer">{{result.title}}</a></td>
+        <td>{{result.contact_name}}</td>
+        <td>{{result.contact_title}}</td>
+        {% if result.contact_verified_email != None %}
+        <td style="background-color:#daf5e1">
+        {% else %}
+        <td>
+        {% endif %}
+            {{result.contact_verified_email}}
+        </td>
+        {% comment %} <td>{{result.rank}}</td>        
+        <td>{{result.domain}}</td>
+        <td>{{result.title}}</td>
+        <td>{{result.category}}</td> {% endcomment %}
+        {% comment %} <td>{{result.address}}</td>
+        <td>{{result.link|truncatechars:70}}</td> {% endcomment %}
+        {% comment %} <td>{{result.snippet}}</td> {% endcomment %}
+        {% comment %} <td>{{result.linkedin_title}}</td>
+        <td>{{result.employee_count}}</td> {% endcomment %}
+        {% comment %} <td>{{result.employee_order}}</td> {% endcomment %}
+        {% comment %} <td>{{result.contact_name}}</td>
+        <td>{{result.contact_title}}</td>
+        <td>{{result.contact_linkedin}}</td>
+        <td>{{result.contact_verified_email}}</td>
+        <td>{{result.phone}}</td>
+        <td>{{result.valid}}</td>
+        <td>{{result.data_id}}</td> {% endcomment %}
+    </tr>
+    {% endfor %}
+</table>

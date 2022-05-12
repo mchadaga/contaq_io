@@ -1,0 +1,141 @@
+
+.pg-hidden-mobile-inline
+  @extend .is-hidden-mobile
+
+.pg-text-centered
+  @extend .has-text-centered
+
+.pg-text-left
+  @extend .has-text-left
+
+.pg-text-right
+  @extend .has-text-right
+
+.pg-title
+  @extend .title
+
+.pg-subtitle
+  @extend .subtitle
+
+// buttons
+
+.pg-button-primary
+  @extend .button, .is-primary
+
+.pg-button-secondary
+  @extend .button, .is-primary, .is-outlined
+
+.pg-button-danger
+  @extend .button, .is-danger, .is-outlined
+
+.pg-button-light
+  @extend .button, .is-text
+
+.pg-inline-buttons
+  @extend .is-flex
+
+.pg-justify-content-end
+  @extend .is-justify-content-flex-end
+
+.pg-is-loading
+  @extend .is-loading
+
+// text modifiers
+
+.pg-text-danger
+  @extend .is-danger
+
+.pg-text-muted
+  @extend .has-text-grey
+
+//  forms
+
+.pg-label
+  @extend .label
+
+.pg-control
+  @extend .input
+
+.pg-select
+  @extend .select
+
+.pg-input-group
+  @extend .mb-3
+
+.pg-help
+  @extend .help
+
+// columns
+
+.pg-columns
+  @extend .columns
+
+.pg-column
+  @extend .column
+
+.pg-column-one-third
+  @extend .column, .is-one-third
+
+.pg-column-one-quarter
+  @extend .column, .is-one-quarter
+
+// tables
+
+.pg-table
+  @extend .is-striped, .is-fullwidth
+
+  // vertically center table cells
+  th, td
+    vertical-align: middle
+
+  .td, .th
+    @extend .py-2, .px-2
+    border: $table-cell-border
+    border-width: $table-cell-border-width
+
+  .th
+    font-weight: bold
+
+// breadcrumbs
+ol.pg-breadcrumbs
+  list-style: none
+
+.pg-breadcrumbs
+  @extend .mb-2
+  align-items: center
+  display: flex
+
+  li:first-child
+    padding: 0
+
+  li:not(:first-child)
+    padding: 0 0 0 0.75em
+    &::before
+      color: $breadcrumb-item-separator-color
+      content: "\0002f"
+      float: left
+      padding-right: 0.75em
+
+    .pg-breadcrumb-active
+      @extend .is-active
+
+// cards
+
+.pg-card
+  @extend .card
+
+.pg-card-image
+  @extend .card-image
+
+.pg-card-body
+  @extend .card-content
+
+// ratios
+
+.pg-ratio-3x2
+  @extend .is-3by2
+
+// spacing
+
+.pg-ml
+  @extend .ml-1

@@ -1,0 +1,19 @@
+.idea
+*.pyc
+*~
+db.sqlite3
+.sass-cache/
+contaq_io/localsettings.py
+contaq_io/local.py
+static_root/
+node_modules/
+media/
+docs/_build
+_dist/
+.env.dev
+.env.production
+.DS_Store
+
+# uncomment these lines after setting up the front-end build pipeline in dev and production
+# static/css/
+# static/js/
