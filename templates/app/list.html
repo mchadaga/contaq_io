@@ -72,6 +72,7 @@
                                     console.log(response["stage"])
                                     a=response["stage"]
                                     if(a==4){
+                                        $("#refund").hide()
                                         $("#section-csv").css("background-color"," #daf5e1");
                                         $("#loading").hide()
                                         $("#loading-bar").hide()
@@ -80,6 +81,9 @@
                                         if(response["count"]>response["target"]){
                                             $("#extraleads").show()
                                             $("#extraleads").html("(The "+(response["count"]-response["target"])+" extra leads are free of charge!)")
+                                        }
+                                        else if(response["count"]<response["target"]){
+                                            $("#refund").show()
                                         }
                                         $("#searchResDiv").load("{% url 'list' id=id %}")
                                         clearInterval(loadInterval)
