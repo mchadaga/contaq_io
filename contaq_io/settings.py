@@ -247,6 +247,7 @@ ANYMAIL = {
     "MAILGUN_API_KEY": "c7ad9c33f90b90e1dc88b1bddf74ec18-fe066263-3b7d936a",
     "MAILGUN_SENDER_DOMAIN": 'mg.contaq.io',
 }
+DEFAULT_FROM_EMAIL = "no-reply@contaq.io"
 # use in production
 # see https://github.com/anymail/django-anymail for more details/examples
 # EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
