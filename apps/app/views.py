@@ -19,7 +19,7 @@ import time
 import threading
 import queue
 
-from bs4 import BeautifulSoup
+# from bs4 import BeautifulSoup
 # Create your views here.
 def dashboard(request):
     # from django import db
