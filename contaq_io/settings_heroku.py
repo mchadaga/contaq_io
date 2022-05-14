@@ -38,5 +38,6 @@ USE_HTTPS_IN_ABSOLUTE_URLS = True
 
 DEBUG = False
 ALLOWED_HOSTS = [
-    'contaq.io'
+    'contaq.io',
+    'contaq.herokuapp.com'
 ]
