@@ -166,7 +166,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
 ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
@@ -244,10 +244,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # use in development
 EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
 ANYMAIL = {
-    "MAILGUN_API_KEY": "c7ad9c33f90b90e1dc88b1bddf74ec18-fe066263-3b7d936a",
+    "MAILGUN_API_KEY": os.environ.get("mailgun_key"),
     "MAILGUN_SENDER_DOMAIN": 'mg.contaq.io',
 }
 DEFAULT_FROM_EMAIL = "no-reply@contaq.io"
+SERVER_EMAIL = "no-reply@contaq.io"
 # use in production
 # see https://github.com/anymail/django-anymail for more details/examples
 # EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
@@ -299,13 +300,15 @@ STRIPE_PAYMENT_MODE = 'elements'  # change to "elements" to try Stripe-elements-
 STRIPE_LIVE_PUBLIC_KEY = os.environ.get("STRIPE_LIVE_PUBLIC_KEY", "<your publishable key>")
 STRIPE_LIVE_SECRET_KEY = os.environ.get("STRIPE_LIVE_SECRET_KEY", "<your secret key>")
 STRIPE_TEST_PUBLIC_KEY = os.environ.get("STRIPE_TEST_PUBLIC_KEY", "pk_test_51KpDrzGI5m9eEtt4XzBqfHqDv6xOw0Bx1GZpGBjoHj3nJjNOAkglDKi9os5PGAsxG8nQK6sNaWi1NnI1xRFpgWn200PwP0MPYM")
-STRIPE_TEST_SECRET_KEY = os.environ.get("STRIPE_TEST_SECRET_KEY", "sk_test_51KpDrzGI5m9eEtt4C6ACbE3oJXkHDIO5Jtznw3Cxg9m1DWfes7iKUyB4k5Q7hmXXbwRYKZItFBwCxBJOqJRjUgZS00X9Jhy2zi")
+# STRIPE_TEST_SECRET_KEY = os.environ.get("STRIPE_TEST_SECRET_KEY", os.environ.get("stripe_key"))
+STRIPE_TEST_SECRET_KEY = os.environ.get("stripe_key")
 STRIPE_LIVE_MODE = False  # Change to True in production
 
 # djstripe settings
 # Get it from the section in the Stripe dashboard where you added the webhook endpoint
 # or from the stripe CLI when testing
-DJSTRIPE_WEBHOOK_SECRET = os.environ.get('DJSTRIPE_WEBHOOK_SECRET', "whsec_469451e0f59f6dd9bfe8d2a57602c3a64f0f48a8104479492b579506e6183d1d")
+# DJSTRIPE_WEBHOOK_SECRET = os.environ.get('DJSTRIPE_WEBHOOK_SECRET', os.environ.get("stripe_whsec"))
+DJSTRIPE_WEBHOOK_SECRET = os.environ.get("stripe_whsec")
 
 DJSTRIPE_FOREIGN_KEY_TO_FIELD = 'id'  # change to 'djstripe_id' if not a new installation
 DJSTRIPE_USE_NATIVE_JSONFIELD = True  # change to False if not a new installation

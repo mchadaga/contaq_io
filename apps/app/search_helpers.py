@@ -14,6 +14,7 @@ import queue
 import time
 import math
 from django.urls import reverse
+import os
 
 def start_email_search(list, industry, location, count):
 
@@ -26,7 +27,7 @@ def start_email_search(list, industry, location, count):
         "searches_type": "mixed"
     }
     batch_result = requests.post(
-        'https://api.scaleserp.com/batches?api_key=311AB9F2410045A69F30606AE563020D', json=batch_body)
+        'https://api.scaleserp.com/batches?api_key='+os.environ.get("scale_serp_key"), json=batch_body)
     batch_response = batch_result.json()
     id = batch_response['batch']['id']
 
@@ -83,10 +84,10 @@ def email_search_loop(id, count):
 
         # Start Batch
         search_result = requests.put('https://api.scaleserp.com/batches/'+id +
-                                    '?api_key=311AB9F2410045A69F30606AE563020D', json={'searches': place_searches})
+                                    '?api_key=' + os.environ.get("scale_serp_key"), json={'searches': place_searches})
 
         start_result = requests.get('https://api.scaleserp.com/batches/' +
-                                    id+'/start', params={'api_key': '311AB9F2410045A69F30606AE563020D'})
+                                    id+'/start', params={'api_key': os.environ.get("scale_serp_key")})
 
         num_search_results = fetch_search_results(id, 180)
         if num_search_results == 0:
@@ -145,35 +146,6 @@ def process_results(batch_id):
         res.save()
 
     return count
-
-    # searches = []
-
-    # for loc in locs:
-    #     s = Search.objects.create(industry=industry.strip(), location=loc.strip(), batch_id=id, list=list)
-
-    #     q = industry.strip()+" "+loc.strip()
-
-    #     for i in range(1, count//20+1):
-    #         searches.append({
-    #             "q": q,
-    #             "location": "United States",
-    #             'search_type': 'places',
-    #             'num': '20',
-    #             'page': i,
-    #             'gl': 'us',
-    #             'hl': 'en',
-    #             'google_domain': 'google.com',
-    #             'output': 'json',
-    #             'custom_id': str(s.id)
-    #         })
-
-    # search_result = requests.put('https://api.scaleserp.com/batches/'+id +
-    #                              '?api_key=311AB9F2410045A69F30606AE563020D', json={'searches': searches})
-
-    # start_result = requests.get('https://api.scaleserp.com/batches/' +
-    #                             id+'/start', params={'api_key': '311AB9F2410045A69F30606AE563020D'})
-
-    # threading.Thread(target=fetch_search_results, args=(id, 180)).start()
 
 
 def fetch_search_results(batch_id, timeout):
@@ -273,7 +245,7 @@ def get_place_details(batch_id):
     if SearchResult.objects.filter(search__list=list, processed=False, domain=None).count() > 2*SearchResult.objects.filter( processed=False,search__list=list).count()//3:
         print("bad links")
         clear_result = requests.delete(
-            'https://api.scaleserp.com/batches/'+batch_id+'/clear?api_key=311AB9F2410045A69F30606AE563020D')
+            'https://api.scaleserp.com/batches/'+batch_id+'/clear?api_key='+os.environ.get("scale_serp_key"))
         
         sr = SearchResult.objects.filter(
             search__list=list, processed=False).exclude(data_id=None)
@@ -290,10 +262,10 @@ def get_place_details(batch_id):
             searches.append(search)
 
         search_res = requests.put('https://api.scaleserp.com/batches/'+batch_id +
-                                  '?api_key=311AB9F2410045A69F30606AE563020D', json={"searches": searches})
+                                  '?api_key='+os.environ.get("scale_serp_key"), json={"searches": searches})
 
         start_result = requests.get('https://api.scaleserp.com/batches/'+batch_id +
-                                    '/start', params={'api_key': '311AB9F2410045A69F30606AE563020D'})
+                                    '/start', params={'api_key': os.environ.get("scale_serp_key")})
 
         fetch_place_results(batch_id, 180)
 
@@ -301,11 +273,11 @@ def fetch_next(batch_id, timeout):
 
     i = 0
     initial = len(requests.get('https://api.scaleserp.com/batches/'+batch_id +
-                  '/results', {'api_key': '311AB9F2410045A69F30606AE563020D'}).json()["results"])
+                  '/results', {'api_key': os.environ.get("scale_serp_key")}).json()["results"])
 
     while i < timeout:
         api_result = requests.get('https://api.scaleserp.com/batches/' +
-                                  batch_id+'/results', {'api_key': '311AB9F2410045A69F30606AE563020D'})
+                                  batch_id+'/results', {'api_key': os.environ.get("scale_serp_key")})
         api_response = api_result.json()
         print(api_response["results"])
         if len(api_response["results"]) > initial:
@@ -313,7 +285,7 @@ def fetch_next(batch_id, timeout):
         time.sleep(1)
 
     params = {
-        'api_key': '311AB9F2410045A69F30606AE563020D'
+        'api_key': os.environ.get("scale_serp_key")
     }
 
     dl_response = requests.get(
@@ -323,23 +295,6 @@ def fetch_next(batch_id, timeout):
 
 
 def fetch_place_results(batch_id, timeout):
-
-    # i = 0
-    # # s = Search.objects.get(batch_id=batch_id)
-
-    # initial = len(requests.get('https://api.scaleserp.com/batches/'+batch_id+'/results', {'api_key': '311AB9F2410045A69F30606AE563020D'}).json()["results"])
-
-    # while i < timeout:
-    #     api_result = requests.get('https://api.scaleserp.com/batches/'+batch_id+'/results', {'api_key': '311AB9F2410045A69F30606AE563020D'})
-    #     api_response = api_result.json()
-    #     print(api_response["results"])
-    #     if len(api_response["results"]) > initial:
-    #         break
-    #     time.sleep(1)
-
-    # params = {
-    #     'api_key': '311AB9F2410045A69F30606AE563020D'
-    # }
 
     dl_response = fetch_next(batch_id, timeout)
 
@@ -365,7 +320,7 @@ def fetch_place_results(batch_id, timeout):
 def linkedin_company_search(batch_id):
 
     clear_result = requests.delete(
-        'https://api.scaleserp.com/batches/'+batch_id+'/clear?api_key=311AB9F2410045A69F30606AE563020D')
+        'https://api.scaleserp.com/batches/'+batch_id+'/clear?api_key='+os.environ.get("scale_serp_key"))
     list = LeadList.objects.get(batch_id=batch_id)
     sr = SearchResult.objects.filter(search__list=list, valid=True, processed=False)
 
@@ -390,10 +345,10 @@ def linkedin_company_search(batch_id):
     # searches_json = {"searches": searches}
 
     search_res = requests.put('https://api.scaleserp.com/batches/'+batch_id +
-                              '?api_key=311AB9F2410045A69F30606AE563020D', json={"searches": searches})
+                              '?api_key='+os.environ.get("scale_serp_key"), json={"searches": searches})
 
     start_result = requests.get('https://api.scaleserp.com/batches/'+batch_id +
-                                '/start', params={'api_key': '311AB9F2410045A69F30606AE563020D'})
+                                '/start', params={'api_key': os.environ.get("scale_serp_key")})
 
     # fetch_linkedin_results(batch_id, timeout)
 
@@ -438,7 +393,7 @@ def linkedin_employee_search(batch_id):
     print("hi")
 
     clear_result = requests.delete(
-        'https://api.scaleserp.com/batches/'+batch_id+'/clear?api_key=311AB9F2410045A69F30606AE563020D')
+        'https://api.scaleserp.com/batches/'+batch_id+'/clear?api_key='+os.environ.get("scale_serp_key"))
     list = LeadList.objects.get(batch_id=batch_id)
     # s = Search.objects.get(batch_id=batch_id)
     sr = SearchResult.objects.filter(search__list=list, valid=True, processed=False)
@@ -465,10 +420,10 @@ def linkedin_employee_search(batch_id):
     # searches_json = {"searches": searches}
 
     search_res = requests.put('https://api.scaleserp.com/batches/'+batch_id +
-                              '?api_key=311AB9F2410045A69F30606AE563020D', json={"searches": searches})
+                              '?api_key='+os.environ.get("scale_serp_key"), json={"searches": searches})
 
     start_result = requests.get('https://api.scaleserp.com/batches/'+batch_id +
-                                '/start', params={'api_key': '311AB9F2410045A69F30606AE563020D'})
+                                '/start', params={'api_key': os.environ.get("scale_serp_key")})
 
     # fetch_linkedin_employee_results(batch_id, timeout)
 
@@ -554,7 +509,7 @@ def fetch_linkedin_employee_results(batch_id, timeout):
 def email_search(batch_id, workers):
 
     clear_result = requests.delete(
-            'https://api.scaleserp.com/batches/'+batch_id+'/clear?api_key=311AB9F2410045A69F30606AE563020D')
+            'https://api.scaleserp.com/batches/'+batch_id+'/clear?api_key='+os.environ.get("scale_serp_key"))
     
     list = LeadList.objects.get(batch_id=batch_id)
     sr = SearchResult.objects.filter(search__list=list, valid=True, processed=False)
@@ -603,7 +558,7 @@ def email_search(batch_id, workers):
 
                 i += 1
 
-                header = {"x-api-key": 'ds4UPx4SzT6yruWH2wQEkK1f'}
+                header = {"x-api-key": os.environ.get("anymail_key")}
                 anymail_params = {
                     'full_name': person[0],
                     'domain': par[1]
@@ -629,7 +584,7 @@ def email_search(batch_id, workers):
 
                         # email = anymail_request_result.json()['email']
                         # neverbounce_request_result = requests.post(
-                        #     "https://api.neverbounce.com/v4/single/check?key=private_4169edd277513a9cc51a1f900cec22c7&email="+email)
+                            # "https://api.neverbounce.com/v4/single/check?key="+os.environ.get("neverbounce_key")+"&email="+email)
                         # neverbounce_json = neverbounce_request_result.json()
                         # if neverbounce_json["result"] == "valid":
                         return (par[2], person[0], person[1], person[2], anymail_request_result.json()['email'])

@@ -83,11 +83,11 @@
                 document.getElementById("industry_suggestions").innerHTML = ""
                 document.getElementById("location_suggestions").innerHTML = ""
                 for (var i=0; i<20; i++){
-                    document.getElementById("industry_suggestions").innerHTML = document.getElementById("industry_suggestions").innerHTML + "<span class='tag is-light is-primary is-large'>"+industries[Math.floor(Math.random() * industries.length)]+"</span> "
+                    document.getElementById("industry_suggestions").innerHTML = document.getElementById("industry_suggestions").innerHTML + "<span class='tag is-light is-primary is-medium'>"+industries[Math.floor(Math.random() * industries.length)]+"</span> "
                 }
-                document.getElementById("location_suggestions").innerHTML = document.getElementById("location_suggestions").innerHTML + "<span class='tag is-light is-success is-large'>"+cities[Math.floor(Math.random() * 100)]+"</span> "
+                document.getElementById("location_suggestions").innerHTML = document.getElementById("location_suggestions").innerHTML + "<span class='tag is-light is-success is-medium'>"+cities[Math.floor(Math.random() * 100)]+"</span> "
                 for (var i=0; i<19; i++){
-                    document.getElementById("location_suggestions").innerHTML = document.getElementById("location_suggestions").innerHTML + "<span class='tag is-light is-success is-large'>"+cities[Math.floor(Math.random() * cities.length)]+"</span> "
+                    document.getElementById("location_suggestions").innerHTML = document.getElementById("location_suggestions").innerHTML + "<span class='tag is-light is-success is-medium'>"+cities[Math.floor(Math.random() * cities.length)]+"</span> "
                 }
             }
             
