@@ -20,6 +20,8 @@ sqlparse==0.4.2
     # via django
 whitenoise==6.0.0
     # via django-heroku
+sentry_sdk==1.5.12
+    # via django-heroku
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
