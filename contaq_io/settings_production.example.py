@@ -56,8 +56,7 @@ MAILCHIMP_LIST_ID = ''
 # Sentry setup
 
 # populate this to configure sentry. should take the form: 'https://****@sentry.io/12345'
-SENTRY_DSN = ''
-
+SENTRY_DSN = os.environ.get('SENTRY_DSN')
 
 if SENTRY_DSN:
     import sentry_sdk
