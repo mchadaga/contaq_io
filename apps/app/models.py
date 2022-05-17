@@ -53,8 +53,8 @@ class SearchResult(models.Model):
     employee_count = models.IntegerField(null=True)
     employee_order = models.CharField(max_length=2000, null=True)
 
-    contact_name = models.CharField(max_length=50, null=True)
-    contact_title = models.CharField(max_length=50, null=True)
+    contact_name = models.CharField(max_length=200, null=True)
+    contact_title = models.CharField(max_length=200, null=True)
     contact_linkedin = models.CharField(max_length=200, null=True)
     contact_verified_email = models.CharField(max_length=33, null=True)
 
