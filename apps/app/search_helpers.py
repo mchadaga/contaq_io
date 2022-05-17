@@ -582,14 +582,14 @@ def email_search(batch_id, workers):
                 if code == 200:
                     if anymail_request_result.json()['email_class'] == 'verified':
 
-                        # email = anymail_request_result.json()['email']
-                        # neverbounce_request_result = requests.post(
-                            # "https://api.neverbounce.com/v4/single/check?key="+os.environ.get("neverbounce_key")+"&email="+email)
-                        # neverbounce_json = neverbounce_request_result.json()
-                        # if neverbounce_json["result"] == "valid":
-                        return (par[2], person[0], person[1], person[2], anymail_request_result.json()['email'])
-                        # else:
-                        #     return (par[2], None, None, None, None)
+                        email = anymail_request_result.json()['email']
+                        neverbounce_request_result = requests.post(
+                            "https://api.neverbounce.com/v4/single/check?key="+os.environ.get("neverbounce_key")+"&email="+email)
+                        neverbounce_json = neverbounce_request_result.json()
+                        if neverbounce_json["result"] == "valid":
+                            return (par[2], person[0], person[1], person[2], anymail_request_result.json()['email'])
+                        else:
+                            return (par[2], None, None, None, None)
 
                 if code != 503 and code != 504 and code != 429 and code != 408:
                     checked = True
