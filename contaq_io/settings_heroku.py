@@ -2,6 +2,7 @@ from .settings import *
 
 import django_heroku
 django_heroku.settings(locals())
+del DATABASES['default']['OPTIONS']['sslmode']
 
 # set SECRET_KEY environment variable to override this
 SECRET_KEY = os.environ.get('SECRET_KEY', SECRET_KEY)
@@ -53,4 +54,4 @@ if SENTRY_DSN:
         integrations=[DjangoIntegration()]
     )
 
-DATABASES['default']['CONN_MAX_AGE'] = 500
+# DATABASES['default']['CONN_MAX_AGE'] = 500
