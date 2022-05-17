@@ -125,7 +125,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'contaq_io', 
         'USER': 'postgres', 
-        'PASSWORD': 'Neura1K!cker08',
+        'PASSWORD': os.environ.get("pg_pwd"),
         'HOST': '127.0.0.1', 
         'PORT': '5432',
     }
