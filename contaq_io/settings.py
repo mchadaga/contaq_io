@@ -175,7 +175,7 @@ ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 
 # User signup configuration: change to "mandatory" to require users to confirm email before signing in.
 # or "optional" to send confirmation emails but not require them
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
 
 AUTHENTICATION_BACKENDS = (
