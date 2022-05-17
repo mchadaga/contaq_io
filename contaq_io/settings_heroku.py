@@ -53,3 +53,4 @@ if SENTRY_DSN:
         integrations=[DjangoIntegration()]
     )
 
+DATABASES['default']['CONN_MAX_AGE'] = 500
