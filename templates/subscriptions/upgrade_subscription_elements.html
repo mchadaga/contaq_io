@@ -1,6 +1,8 @@
 {% extends "subscriptions/upgrade_subscription.html" %}
 {% load static %}
+
 {% block subscription_form %}
+
   <form id="subscription-form">
     {% include 'stripe/components/card_element.html' %}
     <button type="submit" id="subscribe-button" class="button is-primary">Upgrade</button>

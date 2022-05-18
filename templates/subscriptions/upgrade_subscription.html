@@ -11,17 +11,23 @@
   <div id="top2">
     <h1>My Subscription</h1>
     <p>You are not currently subscribed to a plan. Choose a plan to gain access to our prospecting tool.</p>
+    
   </div>
     
 <section class="section-inner">
   {% comment %} {% include 'subscriptions/components/subscription_hero.html' %} {% endcomment %}
   {% comment %} <hr> {% endcomment %}
+  
   {% include 'subscriptions/components/plan_selector.html' %}
   <br>
   <div style="max-width: 650px">
+    
     {% block subscription_form %}{% endblock %}
   </div>
 </section>
+
+<img id="secured_by_stripe" src="https://paymentsplugin.com/assets/blog-images/stripe-badge-transparent.png">
+
 {% endblock %}
 {% block page_js %}
 {{ active_products_json|json_script:'active-products' }}

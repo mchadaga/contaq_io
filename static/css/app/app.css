@@ -390,9 +390,15 @@ body {
       margin-top:40px;
       margin-left:60px;
       margin-right:60px;
+      margin-bottom: 15px;
       font-size: 12px;
       border-top:1px solid #ddd;
       color:#444
+  }
+
+  #secured_by_stripe{
+     width:450px;
+     margin-left:60px;
   }
 
 /* On screens that are less than 700px wide, make the sidebar into a topbar */
@@ -418,4 +424,14 @@ body {
     body{
         margin-left:0px;
     }
+
+    #footer{
+        margin-left:10px;
+        margin-right:10px;
+        
+    }
+
+    #secured_by_stripe{
+        margin-left:0px;
+    }    
   }
