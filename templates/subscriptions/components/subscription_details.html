@@ -33,7 +33,7 @@
         <div class="subdetail">Next payment: {{ friendly_payment_amount }}
           on {{ subscription.current_period_end.date }}</div>
       {% else %}
-        <div class="tag is-info">Off</div>
+        <div class="tag is-black">Plan canceled. Will not renew</div><br>Your access will expire on {{ subscription.current_period_end.date }}
       {% endif %}
     </div>
   </div>

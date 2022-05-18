@@ -3,7 +3,7 @@ import json
 import djstripe
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.mail import mail_admins
+from django.core.mail import mail_admins, send_mail
 from django.db import transaction
 from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse
@@ -107,6 +107,9 @@ def _subscription_success(request, subscription_holder):
         subscription_name = get_product_and_metadata_for_subscription(
             subscription_holder.active_stripe_subscription
         ).metadata.name
+        credits = get_product_and_metadata_for_subscription(
+            subscription_holder.active_stripe_subscription
+        ).metadata.features[0]
         messages.success(request, f"You've successfully signed up for {subscription_name}!\n"
                                   "Refresh to view your new credit balance.")
         # notify admins when someone signs up
@@ -115,5 +118,8 @@ def _subscription_success(request, subscription_holder):
             message="Email: {}".format(request.user.email),
             fail_silently=True,
         )
+        send_mail(f"You've signed up for a {subscription_name} subscription",
+        f'''You've just signed up for the {subscription_name} subscription at Contaq.io. Great choice!\n\nThis subscription gets you {credits} per month. 1 credit = 1 verified email.\n\nReady to build your first lead list using Contaq.io?\n\nhttps://contaq.io/search\n\nOnce the list is ready, you can export it to CSV format and start reaching out to new prospects ;-)\n\nBest,\nContaq.io Team\n''',
+        "Contaq.io Team <no-reply@mg.contaq.io>", [request.user.email])
     redirect = reverse('subscriptions:subscription_details')
     return HttpResponseRedirect(redirect)
