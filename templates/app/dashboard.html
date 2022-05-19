@@ -16,9 +16,9 @@ Dashboard
     <p>You have <b>{{user.credits}}</b> credits remaining</p>
 </div>
 <div class="section-inner"><h2>How To Get Started</h2><p>
-    <p>1. Watch the 60-second tutorials below.<br><br>
-    2. Start a <a id="newsearch" href="{% url 'search' %}">new search</a> in an industry and location you want to contact.<br><br>
-    3. Export your freshly-scraped verified emails from the <a id="listspage" href="{% url 'lists' %}">lists page</a>.</p>
+    <p>1. Go to the <a id="newsearch" href="{% url 'search' %}">search</a> page.<br><br>
+    2. Type in the industry, location, and job titles you want to target.<br><br>
+    3. When the scrape is finished, export your verified emails from the <a id="listspage" href="{% url 'lists' %}">lists page</a>.<br><br>You need credits to use the tool. If you don't have credits, <a id="subspage" href="{% url 'subscriptions:subscription_details' %}">get a subscription</a>.</p>
 </p></div>
 {% comment %} <div class="cols3">
     <div class="column"><iframe
@@ -28,13 +28,15 @@ Dashboard
     <div class="column">f</div>
 </div> {% endcomment %}
 <div class="flex-row-container">
-    <iframe id="iframe-left" allow="fullscreen;"
+    {% comment %} <iframe id="iframe-left" allow="fullscreen;"
         src="https://www.youtube.com/embed/JLg-K6aFZck">
         </iframe><iframe id="iframe-left" allow="fullscreen;"
         src="https://www.youtube.com/embed/2jzevCM79-Y">
         </iframe><iframe id="iframe-left" allow="fullscreen;"
         src="https://www.youtube.com/embed/MzGvaa_3Oxs">
-        </iframe></div>
+        </iframe></div> {% endcomment %}
 
+  </div><div class="section-inner" style="margin-top:0px">
+  <div style="padding:57.14% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/711762679?h=a88a40a393&amp;badge=0&amp;autopause=1&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Contaq.io Demo"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script></div>
   </div>
 {% endblock %}

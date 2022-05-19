@@ -166,6 +166,10 @@ li a {
     text-decoration: none;
     color:rgb(78, 114, 190)
 }
+#subspage:visited{
+    text-decoration: none;
+    color:rgb(78, 114, 190)
+}
 
 .section-inner{
     margin-left:60px;
