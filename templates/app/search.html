@@ -20,6 +20,7 @@
     
         <div class="form-container">
             <form action="/search" method="post" id="form">{% csrf_token %}
+                
                 <div class="form-cols">
                 <div class="form-col">        
                     <h3>What Type of Leads?</h3>
@@ -32,7 +33,36 @@
                     <br>Location (e.g. 'Boston')<br><div class="autocomplete" style="width:100%;"><input autocomplete="off" id="location_input" type="text" placeholder="" name="location" required></div>
                     <br>
                     Unique results? <input type="checkbox" id="ctio-checkbox" checked name="unique_results"><br><br>
-                    <input id="start_scrape" type="submit" value="Begin Search">
+                    {% comment %} <input id="start_scrape" type="submit" value="Begin Search"> {% endcomment %}
+                    <input type="button" id="start_scrape" value="Begin Search" class="js-modal-trigger" data-target="confirm-search">
+                        
+                </input>
+                    <div id="confirm-search" class="modal">
+                        <div class="modal-background"></div>
+                        <div class="modal-card">
+                          <header class="modal-card-head">
+                            <p class="modal-card-title" style="margin:0">Confirm Action</p>
+                            <button type="button" class="delete" aria-label="close"></button>
+                          </header>
+                          <section class="modal-card-body">
+                            You are about to scrape for the following leads:
+                            <br><br>
+                            Industry: <div class="tag is-link is-light is-medium " style="color:black"><span id="modal-industry">Law Firm</span></div>
+                            <br>
+                            Location: <div class="tag is-link is-medium is-light " style="color:black"><span id="modal-location">Minneapolis</span></div>
+                            <br>
+                            Job Titles: <div class="tag is-link is-medium is-light " style="color:black"><span id="modal-job-titles">Founder</span></div>
+                            <br><br>
+                            Cost: Up to <div class="tag is-link is-medium is-light " style="color:black"><span id="modal-max-num-leads">20</span></div> credits
+                            <br><br>
+                            We'll email you at {{user.email}} when it's done.
+                          </section>
+                          <footer class="modal-card-foot">
+                            <button type="submit" class="button is-primary">Confirm & Start Scraping</button>
+                            <button type="button" class="button">Cancel</button>
+                          </footer>
+                        </div>
+                      </div>
                 </div>
                 <div class="form-col">
                 <h3>What Job Title(s)? <span style="font-size:14px; color:#808292">(separate lines, highest priority at top)</span></h3>
@@ -41,10 +71,12 @@
                     <option value="law_firm">Law Firm</option>
                     <option value="marketing">Marketing</option>
                     <option value="custom">Custom</option>
-                </select>
+                </select> <span style="color:#808292;font-size:12px">We recommended 4 or more relevant job titles</span>
                 <br>
                 <textarea rows="7" style="height:108px;width:90%" placeholder="Founder, Owner, etc" id="job_titles" name="job_titles"></textarea>
-                <br>Maximum Number of Leads<br><input required type="number" name="num_leads" min="10" max="{{user.credits}}" {% if user.credits < 20%}value="{{user.credits}}"{%else%}value="20"{%endif%}></form>
+                <br>Maximum Number of Leads<br><input required id="max_num_leads" type="number" name="num_leads" min="10" max="{{user.credits}}" {% if user.credits < 20%}value="{{user.credits}}"{%else%}value="20"{%endif%}></form>
+                
+
             </div>
     </div>
     </div>
@@ -217,6 +249,58 @@
             document.getElementById("job_titles").onchange = function(){
                 document.getElementById("job_title_presets").value = "custom"
             }
+
+            document.getElementById("start_scrape").addEventListener("click", function(){
+                document.getElementById("modal-industry").innerHTML = document.getElementById("industry_input").value
+                document.getElementById("modal-location").innerHTML = document.getElementById("location_input").value
+                document.getElementById("modal-job-titles").innerHTML = document.getElementById("job_titles").value
+                document.getElementById("modal-max-num-leads").innerHTML = document.getElementById("max_num_leads").value
+            })
+
+            document.addEventListener('DOMContentLoaded', () => {
+                // Functions to open and close a modal
+                function openModal($el) {
+                  $el.classList.add('is-active');
+                }
+              
+                function closeModal($el) {
+                  $el.classList.remove('is-active');
+                }
+              
+                function closeAllModals() {
+                  (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+                    closeModal($modal);
+                  });
+                }
+              
+                // Add a click event on buttons to open a specific modal
+                (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+                  const modal = $trigger.dataset.target;
+                  const $target = document.getElementById(modal);
+              
+                  $trigger.addEventListener('click', () => {
+                    openModal($target);
+                  });
+                });
+              
+                // Add a click event on various child elements to close the parent modal
+                (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+                  const $target = $close.closest('.modal');
+              
+                  $close.addEventListener('click', () => {
+                    closeModal($target);
+                  });
+                });
+              
+                // Add a keyboard event to close all modals
+                document.addEventListener('keydown', (event) => {
+                  const e = event || window.event;
+              
+                  if (e.keyCode === 27) { // Escape key
+                    closeAllModals();
+                  }
+                });
+              });
         {% comment %} } {% endcomment %}
     </script>
 {% endblock %}
