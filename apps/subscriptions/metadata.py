@@ -8,6 +8,8 @@ from djstripe.enums import PlanInterval
 from djstripe.models import Product, Plan, Subscription
 from typing import List, Generator, Dict
 
+from contaq_io.settings import STRIPE_LIVE_MODE
+
 from .exceptions import SubscriptionConfigError
 from .serializers import PlanSerializer, ProductSerializer
 
@@ -139,11 +141,18 @@ ACTIVE_PLAN_INTERVALS = [
 
 # These are the products that will be shown to users in the UI and allowed to be associated
 # with plans on your side
-ACTIVE_PRODUCTS = [
-    ProductMetadata(stripe_id='prod_LWH7aTMeYzdOBh', name='Standard Plan', features=["500 credits", 'Equates to <$0.30/lead', 'Cancel anytime'], price_displays={}, description='Scrape 500 verified emails.', is_default=False),
-    ProductMetadata(stripe_id='prod_LWenKEl8C9oVtX', name='Pro Plan', features=["1000 credits", 'Equates to <$0.25/lead', 'Cancel anytime'], price_displays={}, description='Scrape 1,000 verified emails.', is_default=True),
-    ProductMetadata(stripe_id='prod_LWenXHk8knDwGt', name='Elite Plan', features=["2000 credits", 'Equates to <$0.20/lead', 'Cancel anytime'], price_displays={}, description='Scrape 2,000 verified emails.', is_default=False),
-]
+if STRIPE_LIVE_MODE:
+    ACTIVE_PRODUCTS = [
+        ProductMetadata(stripe_id='prod_LicR1574ctZWBo', name='Standard Plan', features=['500 credits', 'Equates to <$0.30/lead', 'Cancel anytime'], price_displays={}, description='Scrape 500 verified emails.', is_default=False),
+        ProductMetadata(stripe_id='prod_LicSezLHFJ8Ota', name='Pro Plan', features=['1000 credits', 'Equates to <$0.25/lead', 'Cancel anytime'], price_displays={}, description='Scrape 1,000 verified emails.', is_default=True),
+        ProductMetadata(stripe_id='prod_LicSnHwP95rNJ9', name='Elite Plan', features=['2000 credits', 'Equates to <$0.20/lead', 'Cancel anytime'], price_displays={}, description='Scrape 2,000 verified emails.', is_default=False),
+    ]
+else:
+    ACTIVE_PRODUCTS = [
+        ProductMetadata(stripe_id='prod_LWH7aTMeYzdOBh', name='Standard Plan', features=["500 credits.", 'Equates to <$0.30/lead', 'Cancel anytime'], price_displays={}, description='Scrape 500 verified emails.', is_default=False),
+        ProductMetadata(stripe_id='prod_LWenKEl8C9oVtX', name='Pro Plan', features=["1000 credits.", 'Equates to <$0.25/lead', 'Cancel anytime'], price_displays={}, description='Scrape 1,000 verified emails.', is_default=True),
+        ProductMetadata(stripe_id='prod_LWenXHk8knDwGt', name='Elite Plan', features=["2000 credits.", 'Equates to <$0.20/lead', 'Cancel anytime'], price_displays={}, description='Scrape 2,000 verified emails.', is_default=False),
+    ]
 
 ACTIVE_PRODUCTS_BY_ID = {
     p.stripe_id: p for p in ACTIVE_PRODUCTS

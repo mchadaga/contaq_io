@@ -297,18 +297,21 @@ GOOGLE_ANALYTICS_ID = ''  # replace with your google analytics ID to connect to 
 STRIPE_PAYMENT_MODE = 'elements'  # change to "elements" to try Stripe-elements-based embedded payments
 
 # modeled to be the same as https://github.com/dj-stripe/dj-stripe
-STRIPE_LIVE_PUBLIC_KEY = os.environ.get("STRIPE_LIVE_PUBLIC_KEY", "<your publishable key>")
-STRIPE_LIVE_SECRET_KEY = os.environ.get("STRIPE_LIVE_SECRET_KEY", "<your secret key>")
+STRIPE_LIVE_PUBLIC_KEY = os.environ.get("STRIPE_LIVE_PUBLIC_KEY", "pk_live_51KpDrzGI5m9eEtt4v5PrTXEGSbqXPkl8hGYQoiYHgU26vR7B07pUolBMXVmv2fIEHI0JHq8NUzrAFbwCWMxegTXG00GdtsVZRg")
+STRIPE_LIVE_SECRET_KEY = os.environ.get("stripe_live_key")
 STRIPE_TEST_PUBLIC_KEY = os.environ.get("STRIPE_TEST_PUBLIC_KEY", "pk_test_51KpDrzGI5m9eEtt4XzBqfHqDv6xOw0Bx1GZpGBjoHj3nJjNOAkglDKi9os5PGAsxG8nQK6sNaWi1NnI1xRFpgWn200PwP0MPYM")
 # STRIPE_TEST_SECRET_KEY = os.environ.get("STRIPE_TEST_SECRET_KEY", os.environ.get("stripe_key"))
 STRIPE_TEST_SECRET_KEY = os.environ.get("stripe_key")
-STRIPE_LIVE_MODE = False  # Change to True in production
+STRIPE_LIVE_MODE = (os.environ.get("LIVE_MODE")=="TRUE")  # Change to True in production
 
 # djstripe settings
 # Get it from the section in the Stripe dashboard where you added the webhook endpoint
 # or from the stripe CLI when testing
 # DJSTRIPE_WEBHOOK_SECRET = os.environ.get('DJSTRIPE_WEBHOOK_SECRET', os.environ.get("stripe_whsec"))
-DJSTRIPE_WEBHOOK_SECRET = os.environ.get("stripe_whsec")
+if STRIPE_LIVE_MODE:
+    DJSTRIPE_WEBHOOK_SECRET = os.environ.get("stripe_live_whsec")
+else:
+    DJSTRIPE_WEBHOOK_SECRET = os.environ.get("stripe_whsec")
 
 DJSTRIPE_FOREIGN_KEY_TO_FIELD = 'id'  # change to 'djstripe_id' if not a new installation
 DJSTRIPE_USE_NATIVE_JSONFIELD = True  # change to False if not a new installation
