@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.datastructures import MultiValueDictKeyError
+from django.contrib import messages
 
 # from app.math_proj_helpers import google_rank_rows
 from apps.app.csv_helpers import create_csv
@@ -67,8 +68,9 @@ def place_search(request):
             list = LeadList.objects.create(user=request.user, target_num_leads = num_leads, job_titles=job_json, unique_results = unique_results)
 
             start_email_search(list, industry, location, num_leads)
-
-            return HttpResponseRedirect((reverse("list", args=[list.pk])))
+            messages.success(request,f"Began scraping for {industry} leads in {location}.\n\nWe'll email you at {request.user.email} when we've found your results.")
+            # return HttpResponseRedirect((reverse("list", args=[list.pk])))
+            return HttpResponseRedirect(reverse("lists"))
 
         else:
             return HttpResponse("Not enough credits")
@@ -92,11 +94,14 @@ def scrape(request):
                 industry += search.industry + ", "
             if (search.location not in location):
                 location += search.location + ", "
+        location = location[:-2]
+        industry = industry[:-2]
         src.append({
             'id': list.id,
             'industry': industry,
             'location': location,
-            'count': count
+            'count': count,
+            'status': list.stage
         })
     return render(request, "app/lists.html", {
         'searches': src

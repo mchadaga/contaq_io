@@ -56,7 +56,7 @@ class SearchResult(models.Model):
     contact_name = models.CharField(max_length=200, null=True)
     contact_title = models.CharField(max_length=200, null=True)
     contact_linkedin = models.CharField(max_length=200, null=True)
-    contact_verified_email = models.CharField(max_length=33, null=True)
+    contact_verified_email = models.CharField(max_length=200, null=True)
 
     processed = models.BooleanField(default=False)
 

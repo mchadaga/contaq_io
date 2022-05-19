@@ -22,6 +22,7 @@
             <th>Industry</th>
             <th>Location</th>
             <th>Emails Found</th>
+            <th>Status</th>
         </tr>
         {% for search in searches %}
         <tr>
@@ -33,6 +34,18 @@
                     -
                 {% else %}
                     {{ search.count }}
+                {% endif %}
+            </td>
+            <td>{% if search.status == 4 %}
+                    Complete
+                {% elif search.status == 3 %}
+                    Processing... <img style="width:16px; vertical-align:baseline" src="https://i.gifer.com/ZZ5H.gif">
+                {% elif search.status == 2 %}
+                    Scraping emails... <img style="width:16px; vertical-align:baseline" src="https://i.gifer.com/ZZ5H.gif">
+                {% elif search.status == 1 %}
+                    Finding contacts... <img style="width:16px; vertical-align:baseline" src="https://i.gifer.com/ZZ5H.gif">
+                {% elif search.status == 0 %}
+                    Finding leads... <img style="width:16px; vertical-align:baseline" src="https://i.gifer.com/ZZ5H.gif">
                 {% endif %}
             </td>
         </tr>

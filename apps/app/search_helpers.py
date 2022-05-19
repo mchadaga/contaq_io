@@ -4,6 +4,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 import requests
 from requests.exceptions import ReadTimeout
 
+from django.core.mail import send_mail
+
 import threading
 
 # from urllib3 import Timeout
@@ -130,6 +132,22 @@ def email_search_loop(id, count):
     list.stage = 4
     list.save()
 
+    industry = ""
+    location = ""
+    for search in searches:
+        if (search.industry not in industry):
+            industry += search.industry + ", "
+        if (search.location not in location):
+            location += search.location + ", "
+    location = location[:-2]
+    industry = industry[:-2]
+
+    if emails_found == 0:
+        send_mail(f"We could not find emails of {industry} in {location}",f"We completed your search for {industry} in {location} and unfortunately, no verified emails were found.\n\nPotential reasons for this:\n\n - The chosen industry does not have much online presence: email, website, LinkedIn are required for us to scrape a lead\n - There are few businesses of this industry in your chosen location\n - There are few matches of the job titles you supplied\n\nIf none of these seem likely and you believe there was a technical error, please email support@mg.contaq.io.\n\nEither way, do not worry, your credits for this search have been refunded.\n\nBest,\nContaq.io Team", "Contaq.io Team <support@mg.contaq.io>", [list.user.email])
+    else:
+        send_mail(f"We found your leads! ({industry} in {location})",f"We completed your search for {industry} in {location} and found {emails_found} verified emails!\n\nTo view your lead list, go to:\n\nhttps://contaq.io/list-{list.id}\n\nTo download the full CSV:\n\nhttps://contaq.io/list-{list.id}/csv\n\nHappy scraping,\nContaq.io Team", "Contaq.io Team <support@mg.contaq.io>", [list.user.email])
+
+    #reimburse credits if necessary
     if emails_found < count:
         list.user.credits += count - emails_found
         list.user.save()
