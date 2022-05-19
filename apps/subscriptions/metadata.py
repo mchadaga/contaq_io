@@ -149,9 +149,9 @@ if STRIPE_LIVE_MODE:
     ]
 else:
     ACTIVE_PRODUCTS = [
-        ProductMetadata(stripe_id='prod_LWH7aTMeYzdOBh', name='Standard Plan', features=["500 credits.", 'Equates to <$0.30/lead', 'Cancel anytime'], price_displays={}, description='Scrape 500 verified emails.', is_default=False),
-        ProductMetadata(stripe_id='prod_LWenKEl8C9oVtX', name='Pro Plan', features=["1000 credits.", 'Equates to <$0.25/lead', 'Cancel anytime'], price_displays={}, description='Scrape 1,000 verified emails.', is_default=True),
-        ProductMetadata(stripe_id='prod_LWenXHk8knDwGt', name='Elite Plan', features=["2000 credits.", 'Equates to <$0.20/lead', 'Cancel anytime'], price_displays={}, description='Scrape 2,000 verified emails.', is_default=False),
+        ProductMetadata(stripe_id='prod_LWH7aTMeYzdOBh', name='Standard Plan', features=["500 credits", 'Equates to <$0.30/lead', 'Cancel anytime.'], price_displays={}, description='Scrape 500 verified emails.', is_default=False),
+        ProductMetadata(stripe_id='prod_LWenKEl8C9oVtX', name='Pro Plan', features=["1000 credits", 'Equates to <$0.25/lead', 'Cancel anytime.'], price_displays={}, description='Scrape 1,000 verified emails.', is_default=True),
+        ProductMetadata(stripe_id='prod_LWenXHk8knDwGt', name='Elite Plan', features=["2000 credits", 'Equates to <$0.20/lead', 'Cancel anytime.'], price_displays={}, description='Scrape 2,000 verified emails.', is_default=False),
     ]
 
 ACTIVE_PRODUCTS_BY_ID = {

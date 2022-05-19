@@ -80,6 +80,8 @@ font-family: 'Plus Jakarta Sans'
         {% block messages %}
         {% include 'web/components/messages.html' %}
       {% endblock messages %}
+    <div id="modal-backdrop" class="hidden fixed inset-0 bg-gray-800 bg-opacity-90 overflow-y-auto h-full z-40 w-full">
+    </div>
         <div class="overflow-x-hidden bg-gray-50">
     <header class="py-4 md:py-6" x-data="{expanded: false}">
         <div class="container px-4 mx-auto sm:px-6 lg:px-8">
@@ -241,6 +243,7 @@ font-family: 'Plus Jakarta Sans'
                             focus:border-gray-900
                         "
                         role="button"
+                        id="show_demo"
                     >
                         <svg class="w-5 h-5 mr-2" viewBox="0 0 18 18" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -259,6 +262,29 @@ font-family: 'Plus Jakarta Sans'
             </div>
         </div>
 
+        <div id="large-modal" tabindex="-1"  class="hidden grid place-items-center h-screen overflow-y-auto overflow-x-hidden fixed top-0 right-50 left-50 z-50 w-full md:inset-0 h-modal md:h-full">
+            <div class="relative p-4 w-full max-w-4xl h-full md:h-auto">
+                <!-- Modal content -->
+                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                    <!-- Modal header -->
+                    <div class="flex justify-between items-center p-5 rounded-t border-b dark:border-gray-600">
+                        <h3 class="text-xl font-medium text-gray-900 dark:text-white">
+                            Contaq.io: The easiest way to scrape verified lead lists
+                        </h3>
+                        {% comment %} <button type="button" id="modal-button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="large-modal">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>  
+                        </button> {% endcomment %}
+                    </div> 
+                    <!-- Modal body -->
+                    <div style="padding:57.14% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/711762679?h=a88a40a393&amp;badge=0&amp;autopause=1&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Contaq.io Demo"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+                    <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
+                        <a href="{% url "account_signup" %}" data-modal-toggle="medium-modal" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Create Account</a>
+                        <button data-modal-toggle="medium-modal" id="modal-button" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Close video</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="pb-12 bg-white">
             <div class="relative">
                 <div class="absolute inset-0 h-2/3 bg-gray-50"></div>
@@ -267,6 +293,10 @@ font-family: 'Plus Jakarta Sans'
                         <img class="transform scale-105" id="demo-pic" style="border-radius:10px;box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);margin-top:60px;margin-bottom:90px" src="https://i.imgur.com/TvXnKSZ.png" alt="" />
                     </div>
                 </div>
+                <button id="play_video" style="position:absolute;   top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                -ms-transform: translate(-50%, -50%); z-index:15; width:70px;height:70px; background-color:#444; border-radius:70px; border:4px solid #bbb;font-size:24px;color:white" class="gg-play-button">▶</button>
             </div>
         </div>
     </section>
@@ -1186,7 +1216,23 @@ font-family: 'Plus Jakarta Sans'
         </div>
     </div>
 </footer>
+<script type="text/javascript">
+    document.getElementById("show_demo").onclick = function(){
+        document.getElementById("large-modal").classList.toggle("hidden")
+        document.getElementById("modal-backdrop").classList.toggle("hidden");
 
+    }
+    document.getElementById("play_video").onclick = function(){
+        document.getElementById("large-modal").classList.toggle("hidden")
+        document.getElementById("modal-backdrop").classList.toggle("hidden");
+
+    }
+    document.getElementById("modal-button").onclick = function(){
+        document.getElementById("large-modal").classList.toggle("hidden")
+        document.getElementById("modal-backdrop").classList.toggle("hidden");
+
+    }
+</script>
 {% block page_js %}
 {% endblock %}
 {% include 'web/components/messages-js.html' %}
