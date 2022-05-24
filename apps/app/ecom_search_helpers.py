@@ -21,7 +21,9 @@ import os
 
 from bs4 import BeautifulSoup
 
-def start_email_search(list, industry, location, count):
+def ecom_start_email_search(list, industry, location, count):
+
+    print("yo")
 
     #Create the ScaleSERP Batch and fetch its ID
     batch_body = {
@@ -65,25 +67,29 @@ def email_search_loop(id, count):
         list.save()
 
         emails_needed = count - emails_found
-        num_searches = math.ceil(emails_needed/20)
+        num_searches = 1
 
         # Load Up Searches
         place_searches = []
         for s in searches:
-            q = s.industry+" "+s.location
+            q = s.location
             for i in range(s.finished_page+1, s.finished_page+1+num_searches):
                 place_searches.append({
-                    "q": q,
-                    "location": "United States",
-                    'search_type': 'places',
-                    'num': '20',
-                    'page': i,
-                    'gl': 'us',
-                    'hl': 'en',
-                    'google_domain': 'google.com',
-                    'output': 'json',
-                    'custom_id': str(s.id)
-                })
+            'api_key': '311AB9F2410045A69F30606AE563020D',
+            'q': q,
+            'search_type': 'shopping',
+            'gl': 'us',
+            'hl': 'en',
+            'page': str(i),
+            'location': 'United States',
+            'google_domain': 'google.com',
+            'shopping_buy_on_google': 'false',
+            'num': '100',
+            'shopping_condition': 'new',
+            'include_html': 'true',
+            'output': 'json',
+            'custom_id': str(s.id)
+            })
             s.finished_page = s.finished_page + num_searches
             s.save()
 
@@ -197,47 +203,69 @@ def fetch_search_results(batch_id, timeout):
 
     res.sort(key=sorter)
 
-    for r in res:
-        print(r['search']['page'])
-        if 'places_results' in (r['result'].keys()):
-            for o in r['result']['places_results']:
-                if o['sponsored'] == False:
-                    rank = (r['search']['page']-1)*20+o['position']
-                    if 'snippet' in o.keys():
-                        snippet = o['snippet']
-                    else:
-                        snippet = None
-                    if 'link' in o.keys():
-                        link = o['link']
-                        domain = link.split("/")[2].replace('www.', '')
-                    else:
-                        link = None
-                        domain = None
-                    if 'address' in o.keys():
-                        address = o['address']
-                    else:
-                        address = None
-                    if 'title' in o.keys():
-                        title = o['title']
-                    else:
-                        title = None
-                    if 'phone' in o.keys():
-                        phone = o['phone']
-                    else:
-                        phone = None
-                    if 'data_id' in o.keys():
-                        data_id = o['data_id']
-                    else:
-                        data_id = None
-                    if '$' in o['extensions'][2]:
-                        category = o['extensions'][3]
-                    else:
-                        category = o['extensions'][2]
-                    SearchResult.objects.create(search=which_search(int(r['search']['custom_id'])), rank=rank, address=address, title=title, phone=phone, data_id=data_id,
-                                                link=link, domain=domain, category=category, description=snippet, valid=(domain != None), processed=False)
-                    num_results += 1
+    # for r in res:
+    #     print(r['search']['page'])
+    #     if 'places_results' in (r['result'].keys()):
+    #         for o in r['result']['places_results']:
+    #             if o['sponsored'] == False:
+    #                 rank = (r['search']['page']-1)*20+o['position']
+    #                 if 'snippet' in o.keys():
+    #                     snippet = o['snippet']
+    #                 else:
+    #                     snippet = None
+    #                 if 'link' in o.keys():
+    #                     link = o['link']
+    #                     domain = link.split("/")[2].replace('www.', '')
+    #                 else:
+    #                     link = None
+    #                     domain = None
+    #                 if 'address' in o.keys():
+    #                     address = o['address']
+    #                 else:
+    #                     address = None
+    #                 if 'title' in o.keys():
+    #                     title = o['title']
+    #                 else:
+    #                     title = None
+    #                 if 'phone' in o.keys():
+    #                     phone = o['phone']
+    #                 else:
+    #                     phone = None
+    #                 if 'data_id' in o.keys():
+    #                     data_id = o['data_id']
+    #                 else:
+    #                     data_id = None
+    #                 if '$' in o['extensions'][2]:
+    #                     category = o['extensions'][3]
+    #                 else:
+    #                     category = o['extensions'][2]
+    #                 SearchResult.objects.create(search=which_search(int(r['search']['custom_id'])), rank=rank, address=address, title=title, phone=phone, data_id=data_id,
+    #                                             link=link, domain=domain, category=category, description=snippet, valid=(domain != None), processed=False)
+    #                 num_results += 1
 
-    return num_results
+    sites = []
+
+    print(res)
+    for r in res:
+        res_html = r['result']['html']
+        print(res_html)
+        soup = BeautifulSoup(res_html, 'lxml')
+
+        product_links = soup.find_all('a', {'class':'LBbJwb shntl'})
+
+        for link in product_links:
+            site = link['href'].split("/")[5]
+            if site != "product" and site != "products":
+                extracted = tldextract.extract(site)
+                formatted = "{}.{}".format(extracted.domain,extracted.suffix)
+                if formatted not in sites:
+                    sites.append(formatted)
+
+
+    for site in sites:
+        SearchResult.objects.create(search=which_search(int(r['search']['custom_id'])), title=site, domain=site, valid=True, processed = False)
+
+    return len(sites)
 
 def remove_duplicates(batch_id):
 

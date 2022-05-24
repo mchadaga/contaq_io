@@ -22,6 +22,8 @@ whitenoise==6.0.0
     # via django-heroku
 sentry_sdk==1.5.12
     # via django-heroku
+bs4==0.0.1
+tldextract==3.3.0
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

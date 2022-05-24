@@ -7,6 +7,7 @@ from django.contrib import messages
 
 # from app.math_proj_helpers import google_rank_rows
 from apps.app.csv_helpers import create_csv
+from apps.app.ecom_search_helpers import ecom_start_email_search
 from apps.app.search_helpers import start_email_search, format_job_titles
 from django.contrib.auth.decorators import login_required
 
@@ -67,7 +68,49 @@ def place_search(request):
             #Create the LeadList
             list = LeadList.objects.create(user=request.user, target_num_leads = num_leads, job_titles=job_json, unique_results = unique_results)
 
-            start_email_search(list, industry, location, num_leads)
+            if industry == "ecom":
+                ecom_start_email_search(list, industry, location, num_leads)
+            else:
+                start_email_search(list, industry, location, num_leads)
+            messages.success(request,f"Began scraping for {industry} leads in {location}.\n\nWe'll email you at {request.user.email} when we've found your results.")
+            # return HttpResponseRedirect((reverse("list", args=[list.pk])))
+            return HttpResponseRedirect(reverse("lists"))
+
+        else:
+            return HttpResponse("Not enough credits")
+
+@login_required
+def ecom_search(request):
+    if request.method == 'GET':
+        return render(request, "app/ecom_search.html")
+    elif request.method == 'POST':
+        num_leads = int(request.POST.__getitem__("num_leads"))
+
+        if num_leads <= request.user.credits:
+
+            request.user.credits -= num_leads
+            request.user.save()
+
+            industry = request.POST.__getitem__("industry")
+            location = request.POST.__getitem__("location")
+            job_titles = request.POST.__getitem__("job_titles")
+            try:
+                unique_results = (request.POST.__getitem__("unique_results") == "on")
+            except MultiValueDictKeyError:
+                unique_results = False
+
+            # unique_results = (request.POST.__getitem__("unique_results") == "on")
+
+            job_json = format_job_titles(job_titles)
+            print(unique_results)
+
+            #Create the LeadList
+            list = LeadList.objects.create(user=request.user, target_num_leads = num_leads, job_titles=job_json, unique_results = unique_results)
+
+            if industry == "ecom":
+                ecom_start_email_search(list, industry, location, num_leads)
+            else:
+                start_email_search(list, industry, location, num_leads)
             messages.success(request,f"Began scraping for {industry} leads in {location}.\n\nWe'll email you at {request.user.email} when we've found your results.")
             # return HttpResponseRedirect((reverse("list", args=[list.pk])))
             return HttpResponseRedirect(reverse("lists"))

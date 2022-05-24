@@ -35,7 +35,7 @@ class Search(models.Model):
 
 
 class SearchResult(models.Model):
-    rank = models.IntegerField()
+    rank = models.IntegerField(null=True)
     title = models.CharField(max_length=100, null=True)
     data_id = models.CharField(max_length=100, null=True)
     address = models.CharField(max_length=200, null=True)
