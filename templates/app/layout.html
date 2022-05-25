@@ -31,6 +31,7 @@
         <div id="sidenav-img"><center><a href="{% url "dashboard" %}"><img src="https://i.imgur.com/Xyzro6r.png"></a></center></div>
         <a class="sidenav-link" id="dash" href="{% url "dashboard" %}"><i class="fa fa-fw fa-tachometer"></i><span class="sidenav-text">Dashboard</span></a>
         <a class="sidenav-link" id="search" class="negMargin" href="{% url "search" %}"><i class="fa fa-fw fa-search"></i><span class="sidenav-text">Search</span></a>
+        <a class="sidenav-link" id="ecom_search" class="negMargin" href="{% url "ecom_search" %}"><i class="fa fa-fw fa-search-plus"></i><span class="sidenav-text">E-Commerce Search</span></a>
         {% comment %} <a class="sidenav-link" id="scrape" class="negMargin" href="{% url "lists" %}"><i class="fa fa-fw fa-list-ul"></i><span class="sidenav-text">Lead Lists <span class="tag is-danger is-rounded" style="font-size:10px;vertical-align:text-bottom">1</span></span></a> {% endcomment %}
         <a class="sidenav-link" id="scrape" class="negMargin" href="{% url "lists" %}"><i class="fa fa-fw fa-list-ul"></i><span class="sidenav-text">Lead Lists </span></a>
         <a class="sidenav-link" id="subscription" class="negMargin" href="{% url "subscriptions:subscription_details" %}"><i class="fa fa-fw fa-credit-card"></i><span class="sidenav-text">Subscription</span></a>

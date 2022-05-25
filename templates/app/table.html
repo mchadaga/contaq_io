@@ -1,7 +1,7 @@
 <table id="searchResults">
     <tr>
         <th>Industry</th>
-        <th>Location</th>
+        <th>{% if industry == "E-Commerce" %}Product{%else%}Location{%endif%}</th>
         <th>Company</th>
         <th>Contact Name</th>
         <th>Contact Title</th>
@@ -21,25 +21,44 @@
         <th>ID</th> {% endcomment %}
     </tr>
     {% for result in searchResults %}
-    {% if result.processed == False %}
+    {% if result.num_leads == 0%}
+    {% if result.result.processed == False %}
+    <tr style="background-color: whitesmoke">
+{% else %} 
+    <tr>
+{% endif %}
+    {% comment %} <td>{{result.search.industry}}</td>   {% endcomment %}
+    
+    <td>{% if result.result.search.industry == "ecom" %}E-Commerce{%else%}{{result.result.category}}{%endif%}</td>
+    <td>{{result.result.search.location}}</td>   
+    <td><a class="table-link" href="http://www.{{result.result.domain}}" target="_blank" rel="noopener noreferrer">{{result.result.title}}</a></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    </tr>
+    {% else %}
+    {% for lead in result.leads %}
+    {% if result.result.processed == False %}
         <tr style="background-color: whitesmoke">
     {% else %} 
-        <tr>
+        <tr {% if forloop.first %}style="border-top:2px solid #ddd"{% endif %}>
     {% endif %}
         {% comment %} <td>{{result.search.industry}}</td>   {% endcomment %}
         
-        <td>{{result.category}}</td>
-        <td>{{result.search.location}}</td>   
-        <td><a class="table-link" href="http://www.{{result.domain}}" target="_blank" rel="noopener noreferrer">{{result.title}}</a></td>
-        <td>{{result.contact_name}}</td>
-        <td>{{result.contact_title}}</td>
-        {% if result.contact_verified_email != None %}
+        <td>{% if forloop.first %}{% if result.result.search.industry == "E-Commerce" %}E-Commerce{%else%}{{result.result.category}}{%endif%}{% endif %}</td>
+        <td>{% if forloop.first %}{{result.result.search.location}}{% endif %}</td>   
+        <td>{% if forloop.first %}<a class="table-link" href="http://www.{{result.result.domain}}" target="_blank" rel="noopener noreferrer">{{result.result.title}}</a>{% endif %}</td>
+        <td>{{lead.name}}</td>
+        <td>{{lead.title}}</td>
+        {% if lead.verified_email != None %}
         <td style="background-color:#daf5e1">
         {% else %}
         <td>
         {% endif %}
-            {{result.contact_verified_email}}
+            {{lead.verified_email}}
         </td>
     </tr>
+    {% endfor %}
+    {%endif%}
     {% endfor %}
 </table>

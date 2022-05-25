@@ -89,16 +89,18 @@ li a {
     width: 100%;
     text-align: left;
 }
-
+table {
+    border-collapse: collapse;
+  }
 #searchResults{
     width: 100%;
     text-align: left;
     overflow:scroll;
 }
 
-#searchResults tr td{
+/* #searchResults tr td{
     border: 0px
-}
+} */
 
 /* The navigation menu links */
 .sidenav-link {

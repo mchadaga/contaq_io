@@ -10,7 +10,7 @@ import threading
 import tldextract
 
 # from urllib3 import Timeout
-from .models import LeadList, Search, SearchResult
+from .models import LeadList, Search, SearchResult, Lead
 import datetime
 import json
 import queue
@@ -249,7 +249,7 @@ def remove_duplicates(batch_id):
         # matches = SearchResult.objects.filter(
         #     search__list=list, valid=True, domain=all_search_res.domain)
         matches = SearchResult.objects.filter(
-            search__list=list, domain=all_search_res.domain)
+            search__list=list, domain=all_search_res.domain).order_by("id")
         print(len(matches))
         if len(matches) > 1 and matches[0] != all_search_res:
             all_search_res.valid = False
@@ -565,9 +565,68 @@ def email_search(batch_id, workers):
     #             results_queue.task_done()
     #         except queue.Full:
     #             break
-
     def find_email(par):
         i = 0
+        leads = []
+        emails = []
+        for person in par[0]:
+
+            if i > 10:
+                break
+
+            if len(leads) >= 2:
+                break
+
+            checked = False
+
+            while not checked:
+
+                i += 1
+
+                header = {"x-api-key": os.environ.get("anymail_key")}
+                anymail_params = {
+                    'full_name': person[0],
+                    'domain': par[1]
+                }
+
+                try:
+                    anymail_request_result = requests.post(
+                    'https://api.anymailfinder.com/v4.1/search/person.json', anymail_params, headers=header, timeout = 61)
+                except ReadTimeout:
+                    return (par[2], leads)               
+
+                code = anymail_request_result.status_code
+                print(code)
+
+                if code == 429:
+                    time.sleep(1)
+
+                if code == 451:
+                    return (par[2], leads)
+
+                if code == 200:
+                    if anymail_request_result.json()['email_class'] == 'verified':
+
+                        email = anymail_request_result.json()['email']
+                        if email not in emails:
+                            neverbounce_request_result = requests.post(
+                                "https://api.neverbounce.com/v4/single/check?key="+os.environ.get("neverbounce_key")+"&email="+email)
+                            neverbounce_json = neverbounce_request_result.json()
+                            if neverbounce_json["result"] == "valid":
+                                emails.append(email)
+                                leads.append((person[0], person[1], person[2], email))
+                        # else:
+                        #     checked = True
+
+                if code != 503 and code != 504 and code != 429 and code != 408:
+                    checked = True
+
+        return (par[2], leads)
+
+
+    def find_email_copy(par):
+        i = 0
+        lists = []
         for person in par[0]:
 
             if i > 10:
@@ -623,12 +682,21 @@ def email_search(batch_id, workers):
                 par = parameters_queue.get(timeout=5)
                 result = find_email(par)
                 update_search_res = SearchResult.objects.get(id=result[0])
-                update_search_res.contact_name = result[1]
-                update_search_res.contact_title = result[2]
-                update_search_res.contact_linkedin = result[3]
-                update_search_res.contact_verified_email = result[4]
-                if result[4] == None:
+                leads = result[1]
+                if len(leads) == 0:
                     update_search_res.valid = False
+                    update_search_res.save()
+                else:
+                    for lead in leads:
+                        Lead.objects.create(searchResult = update_search_res, name=lead[0], title=lead[1], linkedin=lead[2], verified_email=lead[3])
+                        # emails_found += 1
+                
+                # update_search_res.contact_name = result[1]
+                # update_search_res.contact_title = result[2]
+                # update_search_res.contact_linkedin = result[3]
+                # update_search_res.contact_verified_email = result[4]
+                # if result[4] == None:
+                #     update_search_res.valid = False
                 # else:
                 #     emails_found += 1
                 update_search_res.save()

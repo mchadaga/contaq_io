@@ -11,7 +11,7 @@ from apps.app.ecom_search_helpers import ecom_start_email_search
 from apps.app.search_helpers import start_email_search, format_job_titles
 from django.contrib.auth.decorators import login_required
 
-from .models import Search, SearchResult, LeadList
+from .models import Search, SearchResult, LeadList, Lead
 
 import json
 import requests
@@ -68,7 +68,7 @@ def place_search(request):
             #Create the LeadList
             list = LeadList.objects.create(user=request.user, target_num_leads = num_leads, job_titles=job_json, unique_results = unique_results)
 
-            if industry == "ecom":
+            if industry == "E-Commerce":
                 ecom_start_email_search(list, industry, location, num_leads)
             else:
                 start_email_search(list, industry, location, num_leads)
@@ -83,40 +83,6 @@ def place_search(request):
 def ecom_search(request):
     if request.method == 'GET':
         return render(request, "app/ecom_search.html")
-    elif request.method == 'POST':
-        num_leads = int(request.POST.__getitem__("num_leads"))
-
-        if num_leads <= request.user.credits:
-
-            request.user.credits -= num_leads
-            request.user.save()
-
-            industry = request.POST.__getitem__("industry")
-            location = request.POST.__getitem__("location")
-            job_titles = request.POST.__getitem__("job_titles")
-            try:
-                unique_results = (request.POST.__getitem__("unique_results") == "on")
-            except MultiValueDictKeyError:
-                unique_results = False
-
-            # unique_results = (request.POST.__getitem__("unique_results") == "on")
-
-            job_json = format_job_titles(job_titles)
-            print(unique_results)
-
-            #Create the LeadList
-            list = LeadList.objects.create(user=request.user, target_num_leads = num_leads, job_titles=job_json, unique_results = unique_results)
-
-            if industry == "ecom":
-                ecom_start_email_search(list, industry, location, num_leads)
-            else:
-                start_email_search(list, industry, location, num_leads)
-            messages.success(request,f"Began scraping for {industry} leads in {location}.\n\nWe'll email you at {request.user.email} when we've found your results.")
-            # return HttpResponseRedirect((reverse("list", args=[list.pk])))
-            return HttpResponseRedirect(reverse("lists"))
-
-        else:
-            return HttpResponse("Not enough credits")
 
 @login_required
 def scrape(request):
@@ -130,9 +96,10 @@ def scrape(request):
         for search in searches:
             # count += SearchResult.objects.filter(
             #     search=search, valid=True).count()
-            count += SearchResult.objects.filter(
-                search=search, valid=True).count() - SearchResult.objects.filter(
-                search=search, valid=True, contact_verified_email = None).count()
+            # count += SearchResult.objects.filter(
+            #     search=search, valid=True).count() - SearchResult.objects.filter(
+            #     search=search, valid=True, contact_verified_email = None).count()
+            count += Lead.objects.filter(searchResult__search=search).count()
             if (search.industry not in industry):
                 industry += search.industry + ", "
             if (search.location not in location):
@@ -158,9 +125,10 @@ def list(request, id):
         searchResults = []
         count = 0
         for search in searches:
-            count += SearchResult.objects.filter(
-                search=search, valid=True).count() - SearchResult.objects.filter(
-                search=search, valid=True, contact_verified_email = None).count()
+            # count += SearchResult.objects.filter(
+            #     search=search, valid=True).count() - SearchResult.objects.filter(
+            #     search=search, valid=True, contact_verified_email = None).count()
+            count += Lead.objects.filter(searchResult__search=search).count()
         industry = ""
         location = ""
         for search in searches:
@@ -170,7 +138,8 @@ def list(request, id):
                 location += search.location + ", "
             search_res = SearchResult.objects.filter(search=search, valid=True).order_by("id")
             for res in search_res:
-                searchResults.append(res)
+                leads = Lead.objects.filter(searchResult=res)
+                searchResults.append({"result":res,"leads":leads,"num_leads":len(leads)})
         location = location[:-2]
         industry = industry[:-2]
         # print(searchResults)
@@ -202,9 +171,10 @@ def scrape_status(request, id):
         count = 0
         searches = Search.objects.filter(list=list)
         for search in searches:
-            count += SearchResult.objects.filter(
-                search=search, valid=True).count() - SearchResult.objects.filter(
-                search=search, valid=True, contact_verified_email = None).count()
+            # count += SearchResult.objects.filter(
+            #     search=search, valid=True).count() - SearchResult.objects.filter(
+            #     search=search, valid=True, contact_verified_email = None).count()
+            count += Lead.objects.filter(searchResult__search=search).count()
         return JsonResponse({"stage": list.stage,"count": count, "target": list.target_num_leads}, status=200)
     else:
         return JsonResponse({}, status=400)

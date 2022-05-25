@@ -61,3 +61,12 @@ class SearchResult(models.Model):
     processed = models.BooleanField(default=False)
 
     search = models.ForeignKey(Search, on_delete=models.CASCADE)
+
+class Lead(models.Model):
+
+    name = models.CharField(max_length=200, null=True)
+    title = models.CharField(max_length=200, null=True)
+    linkedin = models.CharField(max_length=200, null=True)
+    verified_email = models.CharField(max_length=200, null=True)
+
+    searchResult = models.ForeignKey(SearchResult, on_delete=models.CASCADE)

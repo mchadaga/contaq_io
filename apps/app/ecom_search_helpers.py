@@ -5,6 +5,7 @@ import requests
 from requests.exceptions import ReadTimeout
 
 from django.core.mail import send_mail
+from apps.app.ecom_validate import validate
 
 import threading
 import tldextract
@@ -20,6 +21,7 @@ from django.urls import reverse
 import os
 
 from bs4 import BeautifulSoup
+import apps.app.search_helpers as search_helpers
 
 def ecom_start_email_search(list, industry, location, count):
 
@@ -74,22 +76,38 @@ def email_search_loop(id, count):
         for s in searches:
             q = s.location
             for i in range(s.finished_page+1, s.finished_page+1+num_searches):
-                place_searches.append({
-            'api_key': '311AB9F2410045A69F30606AE563020D',
-            'q': q,
-            'search_type': 'shopping',
-            'gl': 'us',
-            'hl': 'en',
-            'page': str(i),
-            'location': 'United States',
-            'google_domain': 'google.com',
-            'shopping_buy_on_google': 'false',
-            'num': '100',
-            'shopping_condition': 'new',
-            'include_html': 'true',
-            'output': 'json',
-            'custom_id': str(s.id)
-            })
+                if i>2:
+                    place_searches.append({
+                          'api_key': '311AB9F2410045A69F30606AE563020D',
+                            'q': q+' store',
+                            'gl': 'us',
+                            'hl': 'en',
+                            'location': 'United States',
+                            'google_domain': 'google.com',
+                            'page': str(i-2),
+                            'num': '100',
+                            'include_answer_box': 'true',
+                            'output': 'json',
+                            'custom_id': str(s.id)
+                    })
+                else:
+                    place_searches.append({
+                'api_key': '311AB9F2410045A69F30606AE563020D',
+                'q': q,
+                'search_type': 'shopping',
+                'gl': 'us',
+                'hl': 'en',
+                'page': str(i),
+                'location': 'United States',
+                'google_domain': 'google.com',
+                'shopping_buy_on_google': 'false',
+                'num': '100',
+                'shopping_condition': 'new',
+                'shopping_filter': 'smb:1',
+                'include_html': 'true',
+                'output': 'json',
+                'custom_id': str(s.id)
+                })
             s.finished_page = s.finished_page + num_searches
             s.save()
 
@@ -106,8 +124,7 @@ def email_search_loop(id, count):
                 s.reached_end = True
                 s.save()
             break
-        get_place_details(id)
-        remove_duplicates(id)
+        search_helpers.remove_duplicates(id)
         if SearchResult.objects.filter(search__list=list, valid = True, processed=False).count() == 0:
             for s in searches:
                 s.reached_end = True
@@ -115,27 +132,29 @@ def email_search_loop(id, count):
             break
         list.stage = 1
         list.save()
-        linkedin_company_search(id)
-        fetch_linkedin_results(id, 180)
+        # search_helpers.linkedin_company_search(id)
+        # search_helpers.fetch_linkedin_results(id, 180)
+        new_employee_search(id)
+        fetch_new_employee_results(id, 180)
         if SearchResult.objects.filter(search__list=list, valid = True, processed=False).count() == 0:
             for s in searches:
                 s.reached_end = True
                 s.save()
             break
-        linkedin_employee_search(id)
-        fetch_linkedin_employee_results(id, 180)
-        if SearchResult.objects.filter(search__list=list, valid = True, processed=False).count() == 0:
-            for s in searches:
-                s.reached_end = True
-                s.save()
-            break
+        # search_helpers.linkedin_employee_search(id)
+        # search_helpers.fetch_linkedin_employee_results(id, 180)
+        # if SearchResult.objects.filter(search__list=list, valid = True, processed=False).count() == 0:
+        #     for s in searches:
+        #         s.reached_end = True
+        #         s.save()
+        #     break
         list.stage = 2
         list.save()
-        email_search(id, 10)
+        search_helpers.email_search(id, 10)
         list.stage = 3
         list.save()
 
-        emails_found = emails_found + process_results(id)
+        emails_found = emails_found + search_helpers.process_results(id)
 
     print("Completed")
     list.stage = 4
@@ -245,21 +264,33 @@ def fetch_search_results(batch_id, timeout):
 
     sites = []
 
-    print(res)
+    # print(res)
+
     for r in res:
-        res_html = r['result']['html']
-        print(res_html)
-        soup = BeautifulSoup(res_html, 'lxml')
+        #shitty heuristic
+        if "search_type" not in r['search'].keys():
+            if not r["result"]["search_information"]["original_query_yields_zero_results"] and 'organic_results' in r['result'].keys():
+                for o in r['result']['organic_results']:
+                    link = o["link"]
+                    domain = o["domain"]
+                    extracted = tldextract.extract(domain)
+                    formatted = "{}.{}".format(extracted.domain,extracted.suffix)
+                    if formatted not in sites and validate(link):
+                        sites.append(formatted)
+        else:
+            res_html = r['result']['html']
+            # print(res_html)
+            soup = BeautifulSoup(res_html, 'lxml')
 
-        product_links = soup.find_all('a', {'class':'LBbJwb shntl'})
+            product_links = soup.find_all('a', {'class':'LBbJwb shntl'})
 
-        for link in product_links:
-            site = link['href'].split("/")[5]
-            if site != "product" and site != "products":
-                extracted = tldextract.extract(site)
-                formatted = "{}.{}".format(extracted.domain,extracted.suffix)
-                if formatted not in sites:
-                    sites.append(formatted)
+            for link in product_links:
+                site = link['href'].split("/")[5]
+                if site != "product" and site != "products":
+                    extracted = tldextract.extract(site)
+                    formatted = "{}.{}".format(extracted.domain,extracted.suffix)
+                    if formatted not in sites:
+                        sites.append(formatted)
 
 
     for site in sites:
@@ -366,7 +397,7 @@ def fetch_place_results(batch_id, timeout):
             search_res.save()
 
 
-def linkedin_company_search(batch_id):
+def new_employee_search(batch_id):
 
     clear_result = requests.delete(
         'https://api.scaleserp.com/batches/'+batch_id+'/clear?api_key='+os.environ.get("scale_serp_key"))
@@ -377,7 +408,7 @@ def linkedin_company_search(batch_id):
 
     for search_result in sr:
         domain = search_result.domain
-        query = "site:linkedin.com/company \""+domain+"\""
+        query = domain+" owner|ceo|founder"
 
         search = {
             "q": query,
@@ -386,7 +417,8 @@ def linkedin_company_search(batch_id):
             'hl': 'en',
             'google_domain': 'google.com',
             'output': 'json',
-            'custom_id': str(search_result.id)
+            'custom_id': str(search_result.id),
+            'include_answer_box': 'true'
         }
 
         searches.append(search)
@@ -402,7 +434,7 @@ def linkedin_company_search(batch_id):
     # fetch_linkedin_results(batch_id, timeout)
 
 
-def fetch_linkedin_results(batch_id, timeout):
+def fetch_new_employee_results(batch_id, timeout):
 
     num_results = 0
 
@@ -411,25 +443,74 @@ def fetch_linkedin_results(batch_id, timeout):
     link = dl_response["result"]["download_links"]["pages"][0]
     results = json.loads(requests.get(link).text)
 
+    list = LeadList.objects.get(batch_id=batch_id)
+    job_titles = json.loads(list.job_titles)
+
     for r in results:
         # print(r)
         custom_id = int(r['search']['custom_id'])
         # print(custom_id)
         search_res = SearchResult.objects.get(id=custom_id)
+
         if not r["result"]["search_information"]["original_query_yields_zero_results"] and 'organic_results' in r['result'].keys():
-            name = r['result']['organic_results'][0]['title']
-            try:
-                new_name = (name[:name.index("| LinkedIn")-1])
-            except:
-                new_name = name
-            search_res.linkedin_title = new_name
-            search_res.linkedin_url = r['result']['organic_results'][0]['link']
+            
+            order = []
+
+            for o in r['result']['organic_results']:
+                if "linkedin.com/in" in o["link"]:
+                    title = o['title'].replace(' – ', ' - ')
+                    attributes = title.split(" - ")
+
+                    name = attributes[0]
+
+                    # if search_res.linkedin_title.lower() in name.lower() or len(attributes) < 2:
+                    #     continue
+
+                    job = attributes[1]
+
+                    if 'rich_snippet' in o.keys() and 'top' in o['rich_snippet'].keys() and 'extensions' in o['rich_snippet']['top'].keys() and len(o['rich_snippet']['top']['extensions']) >= 3:
+                        job = o['rich_snippet']['top']['extensions'][1]
+
+                    job_lower = job.lower()
+
+                    linkedin = o['link']
+
+                # if 'owner' in job_lower or 'founder' in job_lower or 'chief executive officer' in job_lower or 'ceo' in job_lower or 'head baker' in job_lower or 'chief marketing officer' in job_lower or 'cmo' in job_lower or 'director' in job_lower or ('president' in job_lower and 'vice' not in job_lower):
+                #     if 'assistant' in job_lower or len(order) >= 10:
+                #         continue
+                #     order.append((name, job, linkedin))
+
+                    if 'assistant' in job_lower or len(order) >= 10:
+                        continue
+
+                    for job_title in job_titles:
+                        if job_title.lower() in job_lower:
+                            order.append((name, job, linkedin))
+                            break
+
+            
+                    # print(search_res.domain+"     "+o["title"])
+                    # if 'rich_snippet' in o.keys() and 'top' in o['rich_snippet'].keys() and 'extensions' in o['rich_snippet']['top'].keys():
+                    #     print(o['rich_snippet']['top']['extensions'])
+                                # name = r['result']['organic_results'][0]['title']
+            # try:
+            #     new_name = (name[:name.index("| LinkedIn")-1])
+            # except:
+            #     new_name = name
+            # search_res.linkedin_title = new_name
+            # search_res.linkedin_url = r['result']['organic_results'][0]['link']
+            # search_res.save()
+            if order == []:
+                search_res.valid = False
+            order_json = json.dumps(order)
+            search_res.employee_order = order_json
             search_res.save()
         else:
-            search_res.linkedin_title = None
-            search_res.linkedin_url = None
+            # search_res.linkedin_title = None
+            # search_res.linkedin_url = None
             search_res.valid = False
             search_res.save()
+
         num_results += 1
 
     return num_results
@@ -595,6 +676,7 @@ def email_search(batch_id, workers):
     #             break
 
     def find_email(par):
+        
         i = 0
         for person in par[0]:
 

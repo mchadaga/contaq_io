@@ -6,14 +6,14 @@
 
 {% block body %}
 <style type="text/css">
-    #search{
+    #ecom_search{
         background-color: #325ae7;
         color: white
     }
     </style>
     <div id="top2">
         <h1>Start New E-Commerce Search</h1>
-        <p>Enter an e-commerce product and job title(s). <b>CONTAQ.IO</b> will automatically find relevant contacts and their emails.</p>
+        <p>Enter an e-commerce product. <b>CONTAQ.IO</b> will automatically find relevant online store owners and their emails.</p>
     </div>
 
     <div class="section-inner">
@@ -23,11 +23,11 @@
                 
                 <div class="form-cols">
                 <div class="form-col">        
-                    <h3>What Type of Leads?</h3>
+                    <h3>Find E-Commerce Stores Selling Which Product?</h3>
                     Industry
                     <br>
                     <div class="autocomplete" style="width:100%;">
-                        <input autocomplete="off" id="industry_input" type="text" placeholder="E-Commerce" disabled name="industry" required>
+                        <input autocomplete="off" id="industry_input" type="text"  value="E-Commerce" readonly style="color:#777" name="industry" required>
                     </div>
                     
                     <br>Product (e.g. 'Frisbee')<br><div class="autocomplete" style="width:100%;"><input autocomplete="off" id="location_input" type="text" placeholder="" name="location" required></div>
@@ -65,15 +65,16 @@
                       </div>
                 </div>
                 <div class="form-col">
-                <h3>What Job Title(s)? <span style="font-size:14px; color:#808292">(separate lines, highest priority at top)</span></h3>
-                <select name="job_title_presets" id="job_title_presets">
-                    <option value="default">Decision Maker</option>
+                <h3>For Ecom Searches, Job Titles Are Fixed:</h3>
+                <select readonly style="color:#777"  name="job_title_presets" id="job_title_presets">
+                    <option value="default">E-Commerce</option>
                     <option value="law_firm">Law Firm</option>
                     <option value="marketing">Marketing</option>
                     <option value="custom">Custom</option>
-                </select> <span style="color:#808292;font-size:12px">We recommended 4 or more relevant job titles</span>
+                </select> 
+                {% comment %} <span style="color:#808292;font-size:12px">We recommended 4 or more relevant job titles</span> {% endcomment %}
                 <br>
-                <textarea rows="7" style="height:108px;width:90%" placeholder="Founder, Owner, etc" id="job_titles" name="job_titles"></textarea>
+                <textarea readonly style="color:#777"  rows="7" style="height:108px;width:90%" placeholder="Founder, Owner, etc" id="job_titles" name="job_titles"></textarea>
                 <br>Maximum Number of Leads<br><input required id="max_num_leads" type="number" name="num_leads" min="10" max="{{user.credits}}" {% if user.credits < 20%}value="{{user.credits}}"{%else%}value="20"{%endif%}></form>
                 
 
@@ -82,13 +83,15 @@
     </div>
     
 </div>
-{% comment %} <div class="section-inner">
-    Random Industry & Location suggestions <button onclick="suggestions()">Refresh</button>
+<div class="section-inner">
+    {% comment %} Random Industry & Location suggestions <button onclick="suggestions()">Refresh</button>
     <br><br>
     <div id="industry_suggestions" style="overflow: auto;white-space: nowrap"> </div>
     <br>
-    <div id="location_suggestions" style="overflow: auto;white-space: nowrap"> </div>
-</div> {% endcomment %}
+    <div id="location_suggestions" style="overflow: auto;white-space: nowrap"> </div> {% endcomment %}
+    Lots of ideas for products to scrape here: <a href="https://www.google.com/basepages/producttype/taxonomy.en-US.txt">https://www.google.com/basepages/producttype/taxonomy.en-US.txt</a>
+    <br><br>To get the best results on Contaq.io, don't input a category (e.g. "jewelery"). Instead, input a specific product (e.g. "gold chain").
+</div>
 
 
     <script type="text/javascript">
