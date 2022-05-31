@@ -46,10 +46,14 @@ def place_search(request):
         return render(request, "app/search.html")
     elif request.method == 'POST':
         num_leads = int(request.POST.__getitem__("num_leads"))
+        try:
+            num_contacts = int(request.POST.__getitem__("num_contacts"))
+        except MultiValueDictKeyError:
+            num_contacts = 1
 
-        if num_leads <= request.user.credits:
+        if num_leads*num_contacts <= request.user.credits:
 
-            request.user.credits -= num_leads
+            request.user.credits -= num_leads*num_contacts
             request.user.save()
 
             industry = request.POST.__getitem__("industry")
@@ -66,12 +70,12 @@ def place_search(request):
             print(unique_results)
 
             #Create the LeadList
-            list = LeadList.objects.create(user=request.user, target_num_leads = num_leads, job_titles=job_json, unique_results = unique_results)
+            list = LeadList.objects.create(user=request.user, target_num_leads = num_leads, target_num_contacts = num_contacts, job_titles=job_json, unique_results = unique_results)
 
             if industry == "E-Commerce":
-                ecom_start_email_search(list, industry, location, num_leads)
+                ecom_start_email_search(list, industry, location, num_leads, num_contacts)
             else:
-                start_email_search(list, industry, location, num_leads)
+                start_email_search(list, industry, location, num_leads, num_contacts)
             messages.success(request,f"Began scraping for {industry} leads in {location}.\n\nWe'll email you at {request.user.email} when we've found your results.")
             # return HttpResponseRedirect((reverse("list", args=[list.pk])))
             return HttpResponseRedirect(reverse("lists"))
@@ -154,8 +158,10 @@ def list(request, id):
         return render(request, template, {
             'job_titles': job_titles,
             'count': count,
-            'extra': count-list.target_num_leads,
-            'target': list.target_num_leads,
+            'extra': count-(list.target_num_leads*list.target_num_contacts),
+            'target': list.target_num_leads * list.target_num_contacts,
+            'leads': list.target_num_leads,
+            'contacts': list.target_num_contacts,
             'location': location,
             'industry': industry,
             'searchResults': searchResults,
@@ -175,7 +181,7 @@ def scrape_status(request, id):
             #     search=search, valid=True).count() - SearchResult.objects.filter(
             #     search=search, valid=True, contact_verified_email = None).count()
             count += Lead.objects.filter(searchResult__search=search).count()
-        return JsonResponse({"stage": list.stage,"count": count, "target": list.target_num_leads}, status=200)
+        return JsonResponse({"stage": list.stage,"count": count, "target": list.target_num_leads * list.target_num_contacts}, status=200)
     else:
         return JsonResponse({}, status=400)
 

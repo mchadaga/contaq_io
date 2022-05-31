@@ -53,7 +53,7 @@
                             <br>
                             Job Titles: <div class="tag is-link is-medium is-light " style="color:black"><span id="modal-job-titles">Founder</span></div>
                             <br><br>
-                            Cost: Up to <div class="tag is-link is-medium is-light " style="color:black"><span id="modal-max-num-leads">20</span></div> credits
+                            Cost: Up to <div class="tag is-gray is-medium is-light " style="color:black"><span id="modal-max-num-leads">20</span></div> x <div class="tag is-gray is-medium is-light " style="color:black"><span id="modal-max-num-contacts">2</span></div>=<div class="tag is-link is-medium is-light " style="color:black"><span id="modal-max-num-total"><b>20</b></span></div> credits
                             <br><br>
                             We'll email you at {{user.email}} when it's done.
                           </section>
@@ -74,8 +74,9 @@
                 </select> <span style="color:#808292;font-size:12px">We recommended 4 or more relevant job titles</span>
                 <br>
                 <textarea rows="7" style="height:108px;width:90%" placeholder="Founder, Owner, etc" id="job_titles" name="job_titles"></textarea>
-                <br>Maximum Number of Leads<br><input required id="max_num_leads" type="number" name="num_leads" min="10" max="{{user.credits}}" {% if user.credits < 20%}value="{{user.credits}}"{%else%}value="20"{%endif%}></form>
-                
+                <br>Max. Number of Companies<br><input required id="max_num_leads" type="number" name="num_leads" min="10" max="{{user.credits}}" {% if user.credits < 20%}value="{{user.credits}}"{%else%}value="20"{%endif%}></form>
+                <br>Max. Number of Contacts Per Company<br><input required id="max_num_contacts" type="number" name="num_contacts" min="1" max="10" value="2"></form>
+ 
 
             </div>
     </div>
@@ -224,14 +225,14 @@
             autocomplete(document.getElementById("industry_input"), industries);
             autocomplete(document.getElementById("location_input"), cities);
 
-            titles = {"default":"Founder\nOwner\nCEO\nPresident\nDirector\nCMO",
+            titles = {"default":"Founder\nOwner\nCEO\nPresident\nDirector\nCMO\nPartner\nPrincipal",
                       "law_firm": "Senior Partner\nManaging Partner\nName Partner\nOwner\nFounder\nPresident\nShareholder\nExecutive Director\nPartner",
                       "marketing": "Marketing Director\nCMO\nVP of Marketing\nHead of Marketing\nCEO\nOwner",
                       "custom": ""}
 
 
             function setDefault(){
-                document.getElementById("job_titles").value="Founder\nOwner\nCEO\nPresident\nDirector\nCMO"
+                document.getElementById("job_titles").value="Founder\nOwner\nCEO\nPresident\nDirector\nCMO\nPartner\nPrincipal"
             }
             function setLawFirm(){
                 document.getElementById("job_titles").value="Senior Partner\nManaging Partner\nName Partner\nShareholder\nExecutive Director\nPartner"
@@ -255,6 +256,8 @@
                 document.getElementById("modal-location").innerHTML = document.getElementById("location_input").value
                 document.getElementById("modal-job-titles").innerHTML = document.getElementById("job_titles").value
                 document.getElementById("modal-max-num-leads").innerHTML = document.getElementById("max_num_leads").value
+                document.getElementById("modal-max-num-contacts").innerHTML = document.getElementById("max_num_contacts").value
+                document.getElementById("modal-max-num-total").innerHTML = document.getElementById("max_num_leads").value*document.getElementById("max_num_contacts").value
             })
 
             document.addEventListener('DOMContentLoaded', () => {

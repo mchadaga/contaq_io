@@ -12,6 +12,7 @@ class LeadList(models.Model):
     batch_id = models.CharField(max_length=20, null=True)
     stage = models.IntegerField(default=0)
     target_num_leads = models.IntegerField(default=0)
+    target_num_contacts = models.IntegerField(default=0)
     job_titles = models.CharField(max_length=300, null=True)
     unique_results = models.BooleanField(default = False)
 

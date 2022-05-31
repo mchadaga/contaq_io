@@ -21,7 +21,7 @@ import os
 
 from bs4 import BeautifulSoup
 
-def start_email_search(list, industry, location, count):
+def start_email_search(list, industry, location, count, contacts):
 
     #Create the ScaleSERP Batch and fetch its ID
     batch_body = {
@@ -51,21 +51,22 @@ def start_email_search(list, industry, location, count):
                 finished_page = 0
         s = Search.objects.create(industry=industry.strip(), location=loc.strip(), batch_id=id, list=list, finished_page = finished_page)
 
-    threading.Thread(target=email_search_loop, args=(id, count)).start()
+    threading.Thread(target=email_search_loop, args=(id, count, contacts)).start()
 
-def email_search_loop(id, count):
+def email_search_loop(id, count, contacts):
 
     list = LeadList.objects.get(batch_id=id)
     searches = Search.objects.filter(list=list)
 
     emails_found = 0
-    while emails_found < count:
+    leads_found = 0
+    while leads_found < count:
 
         list.stage = 0
         list.save()
 
-        emails_needed = count - emails_found
-        num_searches = math.ceil(emails_needed/20)
+        leads_needed = count - leads_found
+        num_searches = math.ceil(leads_needed/20)
 
         # Load Up Searches
         place_searches = []
@@ -129,7 +130,7 @@ def email_search_loop(id, count):
         list.stage = 3
         list.save()
 
-        emails_found = emails_found + process_results(id)
+        leads_found = leads_found + process_results(id)
 
     print("Completed")
     list.stage = 4
@@ -145,14 +146,16 @@ def email_search_loop(id, count):
     location = location[:-2]
     industry = industry[:-2]
 
-    if emails_found == 0:
+    emails_found = Lead.objects.filter(searchResult__search__list = list).count()
+
+    if leads_found == 0:
         send_mail(f"We could not find emails of {industry} in {location}",f"We completed your search for {industry} in {location} and unfortunately, no verified emails were found.\n\nPotential reasons for this:\n\n - The chosen industry does not have much online presence: email, website, LinkedIn are required for us to scrape a lead\n - There are few businesses of this industry in your chosen location\n - There are few matches of the job titles you supplied\n\nIf none of these seem likely and you believe there was a technical error, please email support@mg.contaq.io.\n\nEither way, do not worry, your credits for this search have been refunded.\n\nBest,\nContaq.io Team", "Contaq.io Team <support@mg.contaq.io>", [list.user.email])
     else:
         send_mail(f"We found your leads! ({industry} in {location})",f"We completed your search for {industry} in {location} and found {emails_found} verified emails!\n\nTo view your lead list, go to:\n\nhttps://contaq.io/list-{list.id}\n\nTo download the full CSV:\n\nhttps://contaq.io/list-{list.id}/csv\n\nHappy scraping,\nContaq.io Team", "Contaq.io Team <support@mg.contaq.io>", [list.user.email])
 
     #reimburse credits if necessary
-    if emails_found < count:
-        list.user.credits += count - emails_found
+    if emails_found < count*contacts:
+        list.user.credits += count*contacts - emails_found
         list.user.save()
 
 def process_results(batch_id):

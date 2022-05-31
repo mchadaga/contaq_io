@@ -13,7 +13,7 @@
     </style>
     <div id="top2">
         <h2>Search for <u>{{industry}}</u>{% if industry == "E-Commerce" %} stores that sell {%else%} in {%endif%}<u>{{location}}</u></h2>
-        <p>Max num. leads: <b>{{target}}</b>, Job titles: {% for job in job_titles %}<i>{{job}}</i>{{ forloop.last|yesno:",&#44;"|safe }} {%endfor%}</p>
+        <p>Max num. companies: <b>{{leads}}</b>, Max num. contacts: <b>{{contacts}}</b><br>Job titles: {% for job in job_titles %}<i>{{job}}</i>{{ forloop.last|yesno:",&#44;"|safe }} {%endfor%}</p>
     </div>
     {% comment %} <div id="loading"></div> {% endcomment %}
     <div id="section-csv">
