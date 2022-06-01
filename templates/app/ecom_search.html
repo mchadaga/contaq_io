@@ -68,9 +68,9 @@
                 <h3>For Ecom Searches, Job Titles Are Fixed:</h3>
                 <select readonly style="color:#777"  name="job_title_presets" id="job_title_presets">
                     <option value="default">E-Commerce</option>
-                    <option value="law_firm">Law Firm</option>
+                    {% comment %} <option value="law_firm">Law Firm</option>
                     <option value="marketing">Marketing</option>
-                    <option value="custom">Custom</option>
+                    <option value="custom">Custom</option> {% endcomment %}
                 </select> 
                 {% comment %} <span style="color:#808292;font-size:12px">We recommended 4 or more relevant job titles</span> {% endcomment %}
                 <br>
@@ -260,7 +260,17 @@
                 document.getElementById("modal-max-num-leads").innerHTML = document.getElementById("max_num_leads").value
             })
 
+            window.addEventListener('keydown',function(e){
+              if(e.keyIdentifier=='U+000A'||e.keyIdentifier=='Enter'||e.keyCode==13){
+                if(e.target.nodeName=='INPUT'&&(e.target.type=='text'||e.target.type=='number')){
+                  e.preventDefault();return false;
+                }
+              }
+            },true);
+
             document.addEventListener('DOMContentLoaded', () => {
+
+                
                 // Functions to open and close a modal
                 function openModal($el) {
                   $el.classList.add('is-active');
@@ -304,6 +314,7 @@
                   }
                 });
               });
+
         {% comment %} } {% endcomment %}
     </script>
 {% endblock %}

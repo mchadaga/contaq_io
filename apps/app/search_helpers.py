@@ -577,7 +577,7 @@ def email_search(batch_id, workers):
             if i > 10:
                 break
 
-            if len(leads) >= 2:
+            if len(leads) >= list.target_num_contacts:
                 break
 
             checked = False
