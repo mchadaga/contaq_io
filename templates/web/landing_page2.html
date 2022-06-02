@@ -8,6 +8,9 @@
         <script src="https://unpkg.com/alpinejs" defer></script>
         <script src="https://unpkg.com/tailwindcss-jit-cdn"></script> 
         <script defer src="https://unpkg.com/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <title>Premium B2B Lead Scraper</title>
  
@@ -15,7 +18,8 @@
 html{
     scroll-behavior: smooth;
 }
-                        @font-face{
+{% comment %} 
+            @font-face{
                 font-family:Plus Jakarta Sans;
                 font-weight:400;
                 src:url("https://cdn.rareblocks.xyz/fonts/PlusJakartaSans/PlusJakartaSans-Regular.woff") format("woff2")
@@ -48,7 +52,7 @@ html{
                 font-family:Plus Jakarta Sans;
                 font-weight:700;
                 src:url("https://cdn.rareblocks.xyz/fonts/PlusJakartaSans/PlusJakartaSans-Bold.woff") format("woff2")
-            }
+            } {% endcomment %}
 
 [x-cloak] {
     display: none !important;
