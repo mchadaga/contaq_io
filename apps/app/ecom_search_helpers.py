@@ -23,7 +23,7 @@ import os
 from bs4 import BeautifulSoup
 import apps.app.search_helpers as search_helpers
 
-def ecom_start_email_search(list, industry, location, count):
+def ecom_start_email_search(list, industry, location, count, contacts):
 
     print("yo")
 
