@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.datastructures import MultiValueDictKeyError
 from django.contrib import messages
+from apps.app.ecom_validate import blacklist
 
 # from app.math_proj_helpers import google_rank_rows
 from apps.app.csv_helpers import create_csv
@@ -117,9 +118,25 @@ def scrape(request):
             'count': count,
             'status': list.stage
         })
-    return render(request, "app/lists.html", {
+    if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+        template = "app/lists_table.html"
+    else:
+        template = "app/lists.html"
+    return render(request, template, {
         'searches': src
     })
+
+def exclusions(request):
+    if request.method == 'GET':
+        if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+            return JsonResponse({"exclusions": request.user.exclusions}, status=200)
+        else:
+            return render(request, "app/exclusions.html")
+    if request.method == 'POST':
+        request.user.exclusions = request.POST.__getitem__("exclusions")
+        request.user.save()
+        messages.success(request,"Successfully updated your exclusions.")
+        return HttpResponseRedirect(reverse("exclusions"))
 
 @login_required
 def list(request, id):

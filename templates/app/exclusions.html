@@ -1,0 +1,34 @@
+{% extends "app/layout.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block body %}
+<style type="text/css">
+#exclusions{
+    background-color: #325ae7;
+    color: white
+} 
+</style>
+<div id="top2">
+    <h1>Exclusions</h1>
+    <p>Add websites for us to exclude during your searches.</p>
+</div>
+<div class="section-inner"><h2>Add your exclusions below</h2>
+<p>One domain per line
+    <form action="/exclusions" method="post" id="exclusions=form">{% csrf_token %}
+        <textarea id="exclusions_input" style="height:150px;font-size:16px;width:100%;" name="exclusions" required placeholder="Format: website.com"></textarea>
+<button type="submit">Update</button>    </form>
+</p></div>
+<script type="text/javascript">
+    $.ajax({
+        type: 'GET',
+        url: "{% url 'exclusions' %}",
+        success: function (response) {
+            $("#exclusions_input").html(response["exclusions"])
+        }
+    })
+</script>
+
+{% endblock %}

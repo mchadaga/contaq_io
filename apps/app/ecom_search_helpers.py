@@ -5,7 +5,7 @@ import requests
 from requests.exceptions import ReadTimeout
 
 from django.core.mail import send_mail
-from apps.app.ecom_validate import validate
+from apps.app.ecom_validate import validate, check_blacklist
 
 import threading
 import tldextract
@@ -289,7 +289,7 @@ def fetch_search_results(batch_id, timeout):
                 if site != "product" and site != "products":
                     extracted = tldextract.extract(site)
                     formatted = "{}.{}".format(extracted.domain,extracted.suffix)
-                    if formatted not in sites:
+                    if formatted not in sites and check_blacklist(site):
                         sites.append(formatted)
 
 

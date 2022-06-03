@@ -11,6 +11,8 @@ class CustomUser(SubscriptionModelBase, AbstractUser):
     """
     Add additional fields to the user model here.
     """
+    exclusions = models.CharField(max_length=10000, null=True)
+
     credits = models.IntegerField(default=0)
 
     avatar = models.FileField(upload_to='profile-pictures/', blank=True)

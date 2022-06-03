@@ -11,6 +11,7 @@ import tldextract
 
 # from urllib3 import Timeout
 from .models import LeadList, Search, SearchResult, Lead
+from apps.app.ecom_validate import verify_ecom
 import datetime
 import json
 import queue
@@ -248,6 +249,7 @@ def remove_duplicates(batch_id):
     # Remove duplicates / bad data
     all_search_results = SearchResult.objects.filter(
         search__list=list, valid=True, processed = False)
+    #blacklist
     for all_search_res in all_search_results:
         # matches = SearchResult.objects.filter(
         #     search__list=list, valid=True, domain=all_search_res.domain)
@@ -256,7 +258,7 @@ def remove_duplicates(batch_id):
         print(len(matches))
         if len(matches) > 1 and matches[0] != all_search_res:
             all_search_res.valid = False
-        elif all_search_res.domain == 'google.com' or all_search_res.domain == 'facebook.com' or all_search_res.domain == 'm.facebook.com':
+        elif all_search_res.domain == 'google.com' or all_search_res.domain == 'facebook.com' or all_search_res.domain == 'm.facebook.com' or (list.user.exclusions != None and all_search_res.domain in list.user.exclusions):
             all_search_res.valid = False
         all_search_res.save()
 
@@ -572,6 +574,7 @@ def email_search(batch_id, workers):
         i = 0
         leads = []
         emails = []
+
         for person in par[0]:
 
             if i > 10:
@@ -612,6 +615,9 @@ def email_search(batch_id, workers):
 
                         email = anymail_request_result.json()['email']
                         if email not in emails:
+                            #For e-commerce searches, verify that it's an ecommerce store
+                            if len(leads)==0 and len(sr)!=0 and sr[0].search.industry == "E-Commerce" and not verify_ecom(par[1]):
+                                return (par[2], leads)
                             neverbounce_request_result = requests.post(
                                 "https://api.neverbounce.com/v4/single/check?key="+os.environ.get("neverbounce_key")+"&email="+email)
                             neverbounce_json = neverbounce_request_result.json()
