@@ -31,6 +31,15 @@ def dashboard(request):
     if request.user.is_authenticated:
         return render(request, 'app/dashboard.html')
     else:
+        return render(request, 'web/landing_page_ecom.html')
+
+def local_dashboard(request):
+    # from django import db
+    # print(3)
+    # db.connections.close_all()
+    if request.user.is_authenticated:
+        return render(request, 'app/dashboard.html')
+    else:
         return render(request, 'web/landing_page2.html')
 
 @login_required
