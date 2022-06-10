@@ -285,7 +285,10 @@ def fetch_search_results(batch_id, timeout):
             product_links = soup.find_all('a', {'class':'LBbJwb shntl'})
 
             for link in product_links:
-                site = link['href'].split("/")[5]
+                try:
+                    site = link['href'].split("/")[5]
+                except IndexError:
+                    continue
                 if site != "product" and site != "products":
                     extracted = tldextract.extract(site)
                     formatted = "{}.{}".format(extracted.domain,extracted.suffix)
@@ -466,7 +469,10 @@ def fetch_new_employee_results(batch_id, timeout):
                     # if search_res.linkedin_title.lower() in name.lower() or len(attributes) < 2:
                     #     continue
 
-                    job = attributes[1]
+                    if len(attributes)>1:
+                        job = attributes[1]
+                    else:
+                        job = ""
 
                     if 'rich_snippet' in o.keys() and 'top' in o['rich_snippet'].keys() and 'extensions' in o['rich_snippet']['top'].keys() and len(o['rich_snippet']['top']['extensions']) >= 3:
                         job = o['rich_snippet']['top']['extensions'][1]
