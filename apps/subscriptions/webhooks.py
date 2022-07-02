@@ -35,59 +35,60 @@ def update_customer_plan(event, **kwargs):
     We update the subscription in place based on the possible fields, and
     these updates automatically trickle down to the user/team that holds the subscription.
     """
-    # extract new plan and subscription ID
-    new_plan = get_plan_data(event.data)
-    subscription_id = get_subscription_id(event.data)
-    user = CustomUser.objects.get(subscription__id=subscription_id)
+    if "items" in event.data["previous_attributes"].keys():
+        # extract new plan and subscription ID
+        new_plan = get_plan_data(event.data)
+        subscription_id = get_subscription_id(event.data)
+        user = CustomUser.objects.get(subscription__id=subscription_id)
 
-    # find associated subscription and change the plan details accordingly
-    dj_subscription = Subscription.objects.get(id=subscription_id)
-    dj_subscription.plan = Plan.objects.get(id=new_plan['id'])
-    dj_subscription.cancel_at_period_end = get_cancel_at_period_end(event.data)
-    dj_subscription.save()
+        # find associated subscription and change the plan details accordingly
+        dj_subscription = Subscription.objects.get(id=subscription_id)
+        dj_subscription.plan = Plan.objects.get(id=new_plan['id'])
+        dj_subscription.cancel_at_period_end = get_cancel_at_period_end(event.data)
+        dj_subscription.save()
 
-    try:
-        customer_email = Customer.objects.get(id=event.data['object']['customer']).email
-    except Customer.DoesNotExist:
-        customer_email = 'unavailable'
+        try:
+            customer_email = Customer.objects.get(id=event.data['object']['customer']).email
+        except Customer.DoesNotExist:
+            customer_email = 'unavailable'
 
-    # old_prod = ACTIVE_PRODUCTS_BY_ID[event.data["previous_attributes"]["items"]["data"][0]["plan"]["product"]]
-    # new_prod = 
+        # old_prod = ACTIVE_PRODUCTS_BY_ID[event.data["previous_attributes"]["items"]["data"][0]["plan"]["product"]]
+        # new_prod = 
 
-    if 'cancel_at_period_end' in event.data["previous_attributes"].keys():
-        plan_name = ACTIVE_PRODUCTS_BY_ID[event.data["object"]["plan"]["product"]].name
-        if event.data["previous_attributes"]["cancel_at_period_end"]:
-            #They renewed
-            mail_admins(
-                f'Someone just renewed their {plan_name} subscription.',
-                f'Their email was {customer_email}'
-            )
-            email=EmailMessage(f"You have renewed your Contaq.io subscription",
-            f'''You have successfully renewed your {plan_name} subscription at Contaq.io.\n\nBest,\nContaq.io Team\n''',
-                "Contaq.io Team <no-reply@mg.contaq.io>", [user.email])
-            email.send()
+        if 'cancel_at_period_end' in event.data["previous_attributes"].keys():
+            plan_name = ACTIVE_PRODUCTS_BY_ID[event.data["object"]["plan"]["product"]].name
+            if event.data["previous_attributes"]["cancel_at_period_end"]:
+                #They renewed
+                mail_admins(
+                    f'Someone just renewed their {plan_name} subscription.',
+                    f'Their email was {customer_email}'
+                )
+                email=EmailMessage(f"You have renewed your Contaq.io subscription",
+                f'''You have successfully renewed your {plan_name} subscription at Contaq.io.\n\nBest,\nContaq.io Team\n''',
+                    "Contaq.io Team <no-reply@mg.contaq.io>", [user.email])
+                email.send()
+            else:
+                #They canceled
+                mail_admins(
+                    f'Someone just canceled their {plan_name} subscription.',
+                    f'Their email was {customer_email}'
+                )
+                email=EmailMessage(f"You have canceled your Contaq.io subscription",
+                f'''You have canceled your {plan_name} subscription at Contaq.io.\n\nKeep in mind, you still have access to the service until the expiration date.\n\nWe're sorry to see you go,\nContaq.io Team\n''',
+                    "Contaq.io Team <no-reply@mg.contaq.io>", [user.email])
+                email.send()
         else:
-            #They canceled
+            #They switched
+            old_prod = ACTIVE_PRODUCTS_BY_ID[event.data["previous_attributes"]["items"]["data"][0]["plan"]["product"]].name
+            new_prod = ACTIVE_PRODUCTS_BY_ID[event.data["object"]["plan"]["product"]].name
             mail_admins(
-                f'Someone just canceled their {plan_name} subscription.',
+                f'Someone just switched their {old_prod} subscription to {new_prod}.',
                 f'Their email was {customer_email}'
             )
-            email=EmailMessage(f"You have canceled your Contaq.io subscription",
-            f'''You have canceled your {plan_name} subscription at Contaq.io.\n\nKeep in mind, you still have access to the service until the expiration date.\n\nWe're sorry to see you go,\nContaq.io Team\n''',
+            email=EmailMessage(f"You have changed your Contaq.io subscription",
+            f'''You have changed your changed your subscription at Contaq.io from {old_prod} to {new_prod}.\n\nBest,\nContaq.io Team\n''',
                 "Contaq.io Team <no-reply@mg.contaq.io>", [user.email])
             email.send()
-    else:
-        #They switched
-        old_prod = ACTIVE_PRODUCTS_BY_ID[event.data["previous_attributes"]["items"]["data"][0]["plan"]["product"]].name
-        new_prod = ACTIVE_PRODUCTS_BY_ID[event.data["object"]["plan"]["product"]].name
-        mail_admins(
-            f'Someone just switched their {old_prod} subscription to {new_prod}.',
-            f'Their email was {customer_email}'
-        )
-        email=EmailMessage(f"You have changed your Contaq.io subscription",
-        f'''You have changed your changed your subscription at Contaq.io from {old_prod} to {new_prod}.\n\nBest,\nContaq.io Team\n''',
-            "Contaq.io Team <no-reply@mg.contaq.io>", [user.email])
-        email.send()
 
 
 @djstripe_hooks.handler('customer.subscription.deleted')
