@@ -6,8 +6,7 @@ default_context:
   css_theme: default
   database: sqlite
   deploy_platform: heroku
-  description: Contaq.io is a powerful lead generation tool that finds verified contacts
-    in any niche and location!
+  description: Contaq.io is a powerful lead generation tool that finds verified contacts of e-commerce store owners/founders!
   domain_name: contaq.io
   email: mchadaga1@gmail.com
   enable_google_login: y
