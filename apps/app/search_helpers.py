@@ -246,6 +246,11 @@ def fetch_search_results(batch_id, timeout):
 def remove_duplicates(batch_id):
 
     list = LeadList.objects.get(batch_id=batch_id)
+
+    past_leads_domains = []
+    for lead in Lead.objects.filter(searchResult__search__list__user = list.user):
+        past_leads_domains.append(lead.searchResult.domain)
+
     # Remove duplicates / bad data
     all_search_results = SearchResult.objects.filter(
         search__list=list, valid=True, processed = False)
@@ -259,6 +264,8 @@ def remove_duplicates(batch_id):
         if len(matches) > 1 and matches[0] != all_search_res:
             all_search_res.valid = False
         elif all_search_res.domain == 'google.com' or all_search_res.domain == 'facebook.com' or all_search_res.domain == 'm.facebook.com' or (list.user.exclusions != None and all_search_res.domain in list.user.exclusions):
+            all_search_res.valid = False
+        elif list.unique_results and (all_search_res.domain in past_leads_domains):
             all_search_res.valid = False
         all_search_res.save()
 

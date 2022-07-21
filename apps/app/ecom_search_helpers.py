@@ -76,7 +76,21 @@ def email_search_loop(id, count):
         for s in searches:
             q = s.location
             for i in range(s.finished_page+1, s.finished_page+1+num_searches):
-                if i>2:
+                if i>4:
+                    place_searches.append({
+                          'api_key': '311AB9F2410045A69F30606AE563020D',
+                            'q': 'buy '+q+' online',
+                            'gl': 'us',
+                            'hl': 'en',
+                            'location': 'United States',
+                            'google_domain': 'google.com',
+                            'page': str(i-4),
+                            'num': '100',
+                            'include_answer_box': 'true',
+                            'output': 'json',
+                            'custom_id': str(s.id)
+                    })
+                elif i>2:
                     place_searches.append({
                           'api_key': '311AB9F2410045A69F30606AE563020D',
                             'q': q+' store',
@@ -119,12 +133,24 @@ def email_search_loop(id, count):
                                     id+'/start', params={'api_key': os.environ.get("scale_serp_key")})
 
         num_search_results = fetch_search_results(id, 180)
+        print(num_search_results)
         if num_search_results == 0:
-            for s in searches:
-                s.reached_end = True
-                s.save()
-            break
+            retry_success = False
+            if 'search_type' in place_searches[0].keys() and place_searches[0]['search_type']=='shopping':
+                for i in range(3):
+                    requests.get('https://api.scaleserp.com/batches/' +
+                                    id+'/start', params={'api_key': os.environ.get("scale_serp_key")})
+                    n_search_results = fetch_search_results(id, 180)
+                    if n_search_results != 0:
+                        retry_success = True
+                        break
+            if not retry_success:
+                for s in searches:
+                    s.reached_end = True
+                    s.save()
+                break
         search_helpers.remove_duplicates(id)
+        print(SearchResult.objects.filter(search__list=list, valid = True, processed=False).count())
         if SearchResult.objects.filter(search__list=list, valid = True, processed=False).count() == 0:
             for s in searches:
                 s.reached_end = True
@@ -196,7 +222,7 @@ def process_results(batch_id):
 
 def fetch_search_results(batch_id, timeout):
 
-    num_results = 0
+    # num_results = 0
 
     list = LeadList.objects.get(batch_id=batch_id)
     s = Search.objects.filter(list=list)
