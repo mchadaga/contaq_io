@@ -9,6 +9,7 @@ from apps.app.ecom_validate import blacklist
 # from app.math_proj_helpers import google_rank_rows
 from apps.app.csv_helpers import create_csv
 from apps.app.ecom_search_helpers import ecom_start_email_search
+import apps.app.ecom_search_helpers2
 from apps.app.search_helpers import start_email_search, format_job_titles
 from django.contrib.auth.decorators import login_required
 
@@ -60,6 +61,7 @@ def place_search(request):
             num_contacts = int(request.POST.__getitem__("num_contacts"))
         except MultiValueDictKeyError:
             num_contacts = 1
+            # num_contacts = 5
 
         if num_leads*num_contacts <= request.user.credits:
 
@@ -84,6 +86,7 @@ def place_search(request):
 
             if industry == "E-Commerce":
                 ecom_start_email_search(list, industry, location, num_leads, num_contacts)
+                # apps.app.ecom_search_helpers2.ecom_start_email_search(list, industry, location, num_leads, num_contacts)
             else:
                 start_email_search(list, industry, location, num_leads, num_contacts)
             messages.success(request,f"Began scraping for {industry} leads in {location}.\n\nWe'll email you at {request.user.email} when we've found your results.")

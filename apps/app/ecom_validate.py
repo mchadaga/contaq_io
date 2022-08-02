@@ -5,7 +5,7 @@ blacklist = ["linkedin.com", "facebook.com", "pinterest.com", "angi.com", "yelp.
              "hobbylobby.com","t-mobile.com","shopsettings.com","myshopify.com","publix.com","kroger.com","menards.com","pinterest.com","cvs.com","homedepot.com","walmart.com","dollartree.com","lowes.com",
              "ebay.com","target.com","etsy.com","in-n-out.com","tiffany.com","familydollar.com","acehardware.com","yelp.com","coca-cola.com","instagram.com","twitter.com",'amazon.com','nordstrom.com',
              "apple.com","costco.com","macys.com","khols.com","ikea.com","sears.com","buzzfeed.com","today.com","bestbuy.com","quora.com","cnn.com","poshmark.com","bonanza.com","opentip.com","unbeatablesale.com",
-             "stackexchange.com"]
+             "stackexchange.com","meijer.com"]
 
 def check_blacklist(host):
     #returns True if site passes the blacklist
@@ -13,6 +13,17 @@ def check_blacklist(host):
         if site.lower() in host.lower():
             return False
     return True
+
+def validate2(url):
+    split_url = url.split("/")
+    host = split_url[2]
+
+    slug = split_url[3:]
+    if '' in slug:
+        slug.remove('')
+    if len(slug) == 0:
+        return True
+    return False
 
 def validate(url):
     split_url = url.split("/")
