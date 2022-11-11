@@ -1,5 +1,6 @@
 import csv
 import requests
+import os
 
 writefile = open("output.csv", "w")
 writer = csv.DictWriter(writefile, fieldnames=["Company Name", "Link", "Description"])

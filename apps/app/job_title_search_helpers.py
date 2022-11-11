@@ -1,5 +1,6 @@
 import csv
 import requests
+import os
 
 writefile = open("output.csv", "w")
 writer = csv.DictWriter(writefile, fieldnames=["Contact Name", "Contact Title", "Contact LinkedIn", "Company Name", "Location"])
