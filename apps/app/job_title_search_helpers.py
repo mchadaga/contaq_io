@@ -7,7 +7,7 @@ writer.writeheader()
 
 # set up the request parameters
 params = {
-'api_key': '311AB9F2410045A69F30606AE563020D',
+'api_key': os.environ.get("scale_serp_key"),
   'q': 'site:linkedin.com/in intitle:"medical planner"',
   'page': '3',
   'num': '100',

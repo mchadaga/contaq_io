@@ -6,7 +6,7 @@ writer = csv.DictWriter(writefile, fieldnames=["Company Name", "Company LinkedIn
 writer.writeheader()
 
 params = {
-'api_key': '311AB9F2410045A69F30606AE563020D',
+'api_key': os.environ.get("scale_serp_key"),
   'q': 'site:https://www.linkedin.com/company ("ecommerce"|"ecom") +"agency" +"View all 2"',
   'page': '4',
   'num': '100',

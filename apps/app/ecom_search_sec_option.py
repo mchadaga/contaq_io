@@ -6,7 +6,7 @@ writer = csv.DictWriter(writefile, fieldnames=["Company Name", "Link", "Descript
 writer.writeheader()
 
 params = {
-'api_key': '311AB9F2410045A69F30606AE563020D',
+'api_key': os.environ.get("scale_serp_key"),
   'q': 'buy healthy smoothies online',
   'page': '1',
   'num': '100',
