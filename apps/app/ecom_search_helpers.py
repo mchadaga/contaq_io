@@ -78,7 +78,7 @@ def email_search_loop(id, count):
             for i in range(s.finished_page+1, s.finished_page+1+num_searches):
                 if i>4:
                     place_searches.append({
-                          'api_key': '311AB9F2410045A69F30606AE563020D',
+                          'api_key': os.environ.get("scale_serp_key"),
                             'q': 'buy '+q+' online',
                             'gl': 'us',
                             'hl': 'en',
@@ -92,7 +92,7 @@ def email_search_loop(id, count):
                     })
                 elif i>2:
                     place_searches.append({
-                          'api_key': '311AB9F2410045A69F30606AE563020D',
+                          'api_key': os.environ.get("scale_serp_key"),
                             'q': q+' store',
                             'gl': 'us',
                             'hl': 'en',
@@ -106,7 +106,7 @@ def email_search_loop(id, count):
                     })
                 else:
                     place_searches.append({
-                'api_key': '311AB9F2410045A69F30606AE563020D',
+                'api_key': os.environ.get("scale_serp_key"),
                 'q': q,
                 'search_type': 'shopping',
                 'gl': 'us',
@@ -888,7 +888,7 @@ def ecom_search(keyword):
 
     for i in range(1,6):
         params = {
-            'api_key': '311AB9F2410045A69F30606AE563020D',
+            'api_key': os.environ.get("scale_serp_key"),
             'q': keyword,
             'search_type': 'shopping',
             'gl': 'us',

@@ -60,8 +60,8 @@ def place_search(request):
         try:
             num_contacts = int(request.POST.__getitem__("num_contacts"))
         except MultiValueDictKeyError:
-            num_contacts = 1
-            # num_contacts = 5
+            # num_contacts = 1
+            num_contacts = 5
 
         if num_leads*num_contacts <= request.user.credits:
 
@@ -85,8 +85,8 @@ def place_search(request):
             list = LeadList.objects.create(user=request.user, target_num_leads = num_leads, target_num_contacts = num_contacts, job_titles=job_json, unique_results = unique_results)
 
             if industry == "E-Commerce":
-                ecom_start_email_search(list, industry, location, num_leads, num_contacts)
-                # apps.app.ecom_search_helpers2.ecom_start_email_search(list, industry, location, num_leads, num_contacts)
+                # ecom_start_email_search(list, industry, location, num_leads, num_contacts)
+                apps.app.ecom_search_helpers2.ecom_start_email_search(list, industry, location, num_leads, num_contacts)
             else:
                 start_email_search(list, industry, location, num_leads, num_contacts)
             messages.success(request,f"Began scraping for {industry} leads in {location}.\n\nWe'll email you at {request.user.email} when we've found your results.")
